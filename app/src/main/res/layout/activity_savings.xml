@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:clipToPadding="false"
+    android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Back Arrow -->
+    <ImageView
+        android:id="@+id/back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Savings"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        android:gravity="center"/>
+
+    <!-- Current Savings -->
+    <TextView
+        android:id="@+id/current_savings"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/circle_blue"
+        android:gravity="center"
+        android:text="$800"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Monthly Goal Section -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/monthly_goal_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/current_savings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Month and Year -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    android:contentDescription="Calendar" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="July 2024"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+            <!-- Goal for this Month -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Goal for this Month"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+
+            <!-- Progress Indicator -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_blue_background"
+                    android:padding="8dp"
+                    android:text="$200"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:indicatorColor="@color/Blue"
+                    app:trackColor="@android:color/darker_gray"
+                    app:trackThickness="8dp"
+                    android:progress="40" /> <!-- 200/500 = 40% -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$500"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Your Goals Title -->
+    <TextView
+        android:id="@+id/your_goals_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Your Goals"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/monthly_goal_card"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- RecyclerView for Goals -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/goals_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:scrollbars="vertical"
+        android:nestedScrollingEnabled="true"
+        app:layout_constraintTop_toBottomOf="@id/your_goals_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_goal" />
+
+    <!-- Include Bottom Navigation -->
+    <include
+        android:id="@+id/bottom_navigation_layout"
+        layout="@layout/activity_bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

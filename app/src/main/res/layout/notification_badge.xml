@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- Icon (handled by BottomNavigationView) -->
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center" />
+
+    <!-- Red Badge -->
+    <View
+        android:id="@+id/notification_badge"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/circle_red2" />
+</FrameLayout>

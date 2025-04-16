@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:clipToPadding="false">
+
+    <!-- Back Arrow -->
+    <ImageView
+        android:id="@+id/back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Add Goal"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Goal Title Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/goal_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="Goal Title"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/goal_title_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Amount Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/amount_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Amount"
+        app:endIconDrawable="@drawable/ic_dollar"
+        app:layout_constraintTop_toBottomOf="@id/goal_title_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/amount_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal" />
+</com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Contribution Type Dropdown -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/contribution_type_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Contribution Type"
+        app:endIconMode="dropdown_menu"
+        app:layout_constraintTop_toBottomOf="@id/amount_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/contribution_type_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Deadline Date Picker -->
+        <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/deadline_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Deadline"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_calendar"
+        app:layout_constraintTop_toBottomOf="@id/contribution_type_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/deadline_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Add Goal Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_goal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="ADD GOAL"
+        android:textColor="@android:color/white"
+        app:cornerRadius="8dp"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        app:backgroundTint="@color/Blue"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

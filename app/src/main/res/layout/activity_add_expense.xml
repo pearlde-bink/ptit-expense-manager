@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Add Income"
+        android:text="Add Expense"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -168,13 +168,13 @@
             android:padding="4dp" />
     </LinearLayout>
 
-    <!-- Income Title Input -->
+    <!-- Expense Title Input -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/income_title_layout"
+        android:id="@+id/expense_title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:hint="INCOME TITLE"
+        android:hint="EXPENSE TITLE"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="#D3D3D3"
         app:hintTextColor="#A3A3A3"
@@ -183,7 +183,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/income_title_input"
+            android:id="@+id/expense_title_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -204,7 +204,7 @@
         app:hintTextColor="#A3A3A3"
         app:endIconDrawable="@drawable/ic_dollar"
         app:endIconTint="#A3A3A3"
-        app:layout_constraintTop_toBottomOf="@id/income_title_layout"
+        app:layout_constraintTop_toBottomOf="@id/expense_title_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -224,7 +224,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="INCOME CATEGORY"
+        android:text="EXPENSE CATEGORY"
         android:textSize="12sp"
         android:textColor="#A3A3A3"
         android:fontFamily="sans-serif-medium"
@@ -265,19 +265,18 @@
                 android:id="@+id/category_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginRight="2dp" />
+                android:orientation="horizontal" />
         </HorizontalScrollView>
     </LinearLayout>
 
-    <!-- Add Income Button -->
+    <!-- Add Expense Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_add_income"
+        android:id="@+id/btn_add_expense"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
-        android:text="ADD INCOME"
+        android:text="ADD EXPENSE"
         android:textSize="14sp"
         android:textColor="@android:color/white"
         app:cornerRadius="24dp"

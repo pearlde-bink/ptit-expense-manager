@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensemanager.adapter.CalendarRecyclerAdapter;
-import com.example.expensemanager.model.Income;
+import com.example.expensemanager.model.Expense;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.text.SimpleDateFormat;
@@ -26,15 +26,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class AddIncome extends AppCompatActivity {
+public class AddExpense extends AppCompatActivity {
 
-    private TextInputEditText incomeTitleInput;
+    private TextInputEditText expenseTitleInput;
     private TextInputEditText amountInput;
     private TextView monthYearText;
     private RecyclerView calendarGrid;
     private CalendarRecyclerAdapter calendarAdapter;
     private Calendar selectedDate;
-    private String selectedCategory = "Salary"; // Default category
+    private String selectedCategory = "Health"; // Default category
     private boolean isMonthNavigationEnabled = true;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private static final long DEBOUNCE_DELAY = 300; // 300ms debounce delay
@@ -47,7 +47,7 @@ public class AddIncome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_income);
+        setContentView(R.layout.activity_add_expense);
 
         // Initialize views
         ImageView backArrow = findViewById(R.id.back_arrow);
@@ -55,16 +55,16 @@ public class AddIncome extends AppCompatActivity {
         ImageView prevMonth = findViewById(R.id.prev_month);
         ImageView nextMonth = findViewById(R.id.next_month);
         calendarGrid = findViewById(R.id.calendar_grid);
-        incomeTitleInput = findViewById(R.id.income_title_input);
+        expenseTitleInput = findViewById(R.id.expense_title_input);
         amountInput = findViewById(R.id.amount_input);
         categoryContainer = findViewById(R.id.category_container);
         ImageButton addCategoryButton = findViewById(R.id.add_category_button);
-        MaterialButton addIncomeButton = findViewById(R.id.btn_add_income);
+        MaterialButton addExpenseButton = findViewById(R.id.btn_add_expense);
 
         // Initialize categories
         categories = new ArrayList<>();
-        categories.add("Salary");
-        categories.add("Rewards");
+        categories.add("Health");
+        categories.add("Grocery");
         categoryButtons = new ArrayList<>();
 
         // Populate category buttons
@@ -138,20 +138,20 @@ public class AddIncome extends AppCompatActivity {
             }
         });
 
-        // Set up Add Income Button
-        addIncomeButton.setOnClickListener(new View.OnClickListener() {
+        // Set up Add Expense Button
+        addExpenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String incomeTitle = incomeTitleInput.getText().toString();
+                String expenseTitle = expenseTitleInput.getText().toString();
                 String amountStr = amountInput.getText().toString();
 
-                if (incomeTitle.isEmpty() || amountStr.isEmpty()) {
-                    Toast.makeText(AddIncome.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                if (expenseTitle.isEmpty() || amountStr.isEmpty()) {
+                    Toast.makeText(AddExpense.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (selectedCategory == null) {
-                    Toast.makeText(AddIncome.this, "Please select a category", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddExpense.this, "Please select a category", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -159,50 +159,23 @@ public class AddIncome extends AppCompatActivity {
                 try {
                     amount = Double.parseDouble(amountStr);
                 } catch (NumberFormatException e) {
-                    Toast.makeText(AddIncome.this, "Invalid amount", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddExpense.this, "Invalid amount", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Create a new Income object
-                Income newIncome = new Income(selectedDate.getTime(), incomeTitle, amount, selectedCategory);
+                // Create a new Expense object
+                Expense newExpense = new Expense(selectedDate.getTime(), expenseTitle, amount, selectedCategory);
 
-                // Pass the new Income back to the calling activity
+                // Pass the new Expense back to the calling activity
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("new_income", newIncome);
+                resultIntent.putExtra("new_expense", newExpense);
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
         });
     }
 
-    private void updateCategoryButtonStyles() {
-        for (MaterialButton button : categoryButtons) {
-            String buttonText = button.getText().toString();
-            button.setTextColor(getResources().getColor(buttonText.equals(selectedCategory) ? android.R.color.white : android.R.color.black));
-            button.setBackgroundTintList(getResources().getColorStateList(buttonText.equals(selectedCategory) ? R.color.Blue : android.R.color.white));
-        }
-    }
-
-    private void updateMonthYearText() {
-        SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM-yyyy", Locale.getDefault());
-        monthYearText.setText(monthYearFormat.format(selectedDate.getTime()));
-    }
-
-    private void updateSelectedDay() {
-        int currentDay = selectedDate.get(Calendar.DAY_OF_MONTH);
-        Calendar tempCal = (Calendar) selectedDate.clone();
-        tempCal.set(Calendar.DAY_OF_MONTH, 1);
-        int firstDayOfMonth = tempCal.get(Calendar.DAY_OF_WEEK) - 2; // Adjust for Monday as first day
-        if (firstDayOfMonth < 0) {
-            firstDayOfMonth += 7;
-        }
-        int position = firstDayOfMonth + (currentDay - 1);
-        if (position >= 0 && position < calendarAdapter.getItemCount()) {
-            calendarAdapter.setSelectedPosition(position);
-        }
-    }
     private void populateCategoryButtons() {
-        // Only clear and rebuild if the list is empty (initial load)
         if (categoryButtons.isEmpty()) {
             categoryContainer.removeAllViews();
             categoryButtons.clear();
@@ -242,6 +215,14 @@ public class AddIncome extends AppCompatActivity {
         categoryButtons.add(categoryButton);
     }
 
+    private void updateCategoryButtonStyles() {
+        for (MaterialButton button : categoryButtons) {
+            String buttonText = button.getText().toString();
+            button.setTextColor(getResources().getColor(buttonText.equals(selectedCategory) ? android.R.color.white : android.R.color.black));
+            button.setBackgroundTintList(getResources().getColorStateList(buttonText.equals(selectedCategory) ? R.color.Blue : android.R.color.white));
+        }
+    }
+
     private void showAddCategoryDialog() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_add_category);
@@ -262,12 +243,12 @@ public class AddIncome extends AppCompatActivity {
             public void onClick(View v) {
                 String newCategory = categoryInput.getText().toString().trim();
                 if (newCategory.isEmpty()) {
-                    Toast.makeText(AddIncome.this, "Please enter a category name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddExpense.this, "Please enter a category name", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (categories.contains(newCategory)) {
-                    Toast.makeText(AddIncome.this, "Category already exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddExpense.this, "Category already exists", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -275,11 +256,30 @@ public class AddIncome extends AppCompatActivity {
                 if (selectedCategory == null) {
                     selectedCategory = newCategory;
                 }
-                addCategoryButton(newCategory); // Add only the new category button
+                addCategoryButton(newCategory);
                 dialog.dismiss();
             }
         });
 
         dialog.show();
+    }
+
+    private void updateMonthYearText() {
+        SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM-yyyy", Locale.getDefault());
+        monthYearText.setText(monthYearFormat.format(selectedDate.getTime()));
+    }
+
+    private void updateSelectedDay() {
+        int currentDay = selectedDate.get(Calendar.DAY_OF_MONTH);
+        Calendar tempCal = (Calendar) selectedDate.clone();
+        tempCal.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDayOfMonth = tempCal.get(Calendar.DAY_OF_WEEK) - 2; // Adjust for Monday as first day
+        if (firstDayOfMonth < 0) {
+            firstDayOfMonth += 7;
+        }
+        int position = firstDayOfMonth + (currentDay - 1);
+        if (position >= 0 && position < calendarAdapter.getItemCount()) {
+            calendarAdapter.setSelectedPosition(position);
+        }
     }
 }

@@ -9,7 +9,7 @@
     <item
         android:id="@+id/nav_list"
         android:icon="@drawable/piggy_bank"
-        android:title="List" />
+        android:title="Entries" />
     <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/bell"
@@ -19,5 +19,5 @@
     <item
         android:id="@+id/nav_settings"
         android:icon="@drawable/settings"
-        android:title="Settings" />
+        android:title="Reminders" />
 </menu>

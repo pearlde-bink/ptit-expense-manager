@@ -103,6 +103,12 @@ public class TotalExpenses extends BaseActivity{
     protected int getSelectedNavItemId() {
         return R.id.nav_home; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
+    }
+
     private void updateDateAndCalendar() {
         // Update date text
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());
@@ -173,7 +179,18 @@ public class TotalExpenses extends BaseActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 1) {
-            Toast.makeText(this, "Entry added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
+            // Notify fragments to refresh their data
+            FragmentSpends spendsFragment = (FragmentSpends) getSupportFragmentManager()
+                    .findFragmentByTag("f" + viewPager.getCurrentItem());
+            FragmentCategories categoriesFragment = (FragmentCategories) getSupportFragmentManager()
+                    .findFragmentByTag("f" + viewPager.getCurrentItem());
+            if (spendsFragment != null) {
+                // Update SpendsFragment (you'll need to expose a method to refresh its data)
+            }
+            if (categoriesFragment != null) {
+                // Update CategoriesFragment (you'll need to expose a method to refresh its data)
+            }
         }
     }
 }

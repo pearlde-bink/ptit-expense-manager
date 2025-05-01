@@ -33,8 +33,6 @@ public class Add extends BaseActivity {
         MaterialButton btnAddIncome = findViewById(R.id.btn_add_income);
         MaterialButton btnAddExpense = findViewById(R.id.btn_add_expense);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
-//        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-//        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Initialize entries list
         entries = new ArrayList<>();
@@ -80,6 +78,12 @@ public class Add extends BaseActivity {
     protected int getSelectedNavItemId() {
         return -1; // No item highlighted, as this is an intermediate screen
     }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return null; // No FAB action since we're already in Add
+    }
+
     private void populateSampleEntries() {
         Calendar calendar = Calendar.getInstance();
 
@@ -114,6 +118,10 @@ public class Add extends BaseActivity {
                             false
                     ));
                     entryAdapter.notifyDataSetChanged();
+                    // Forward the result to the calling activity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("new_income", newIncome);
+                    setResult(RESULT_OK, resultIntent);
                 }
             } else if (requestCode == 2) {
                 // Handle new expense
@@ -129,6 +137,10 @@ public class Add extends BaseActivity {
                             true
                     ));
                     entryAdapter.notifyDataSetChanged();
+                    // Forward the result to the calling activity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("new_expense", newExpense);
+                    setResult(RESULT_OK, resultIntent);
                 }
             }
         }

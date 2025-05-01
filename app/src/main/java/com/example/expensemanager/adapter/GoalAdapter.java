@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.expensemanager.R;
 import com.example.expensemanager.model.Goal;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -32,11 +31,23 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
     @Override
     public void onBindViewHolder(@NonNull GoalViewHolder holder, int position) {
         Goal goal = goals.get(position);
-        holder.icon.setImageResource(goal.getIconResId());
         holder.title.setText(goal.getTitle());
         holder.currentAmount.setText("$" + goal.getCurrentAmount());
         holder.targetAmount.setText("$" + goal.getTargetAmount());
         holder.progress.setProgress(goal.getProgress());
+        // Icon is set in the layout (ic_bike); can be made dynamic if needed
+    }
+
+    @Override
+    public int getItemCount() {
+        int count = goals.size();
+        android.util.Log.d("GoalAdapter", "Item count: " + count);
+        return count;
+    }
+
+    public void addGoal(Goal newGoal) {
+        goals.add(newGoal);
+        notifyItemInserted(goals.size() - 1);
     }
 
     static class GoalViewHolder extends RecyclerView.ViewHolder {
@@ -54,17 +65,5 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
             targetAmount = itemView.findViewById(R.id.goal_target_amount);
             progress = itemView.findViewById(R.id.goal_progress);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        int count = goals.size();
-        android.util.Log.d("GoalAdapter", "Item count: " + count);
-        return count;
-    }
-
-    public void addGoal(Goal newGoal) {
-        goals.add(newGoal);
-        notifyItemInserted(goals.size() - 1);
     }
 }

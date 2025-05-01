@@ -14,6 +14,7 @@ import com.example.expensemanager.adapter.EntryAdapter;
 import com.example.expensemanager.model.Entry;
 import com.example.expensemanager.model.Expense;
 import com.example.expensemanager.model.Income;
+import com.example.expensemanager.model.Reminder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,8 +46,6 @@ public class Overview extends BaseActivity {
         MaterialButton btnRemind = findViewById(R.id.btn_remind);
         MaterialButton btnBudget = findViewById(R.id.btn_budget);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
-//        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-//        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Initialize entries list
         entries = new ArrayList<>();
@@ -75,8 +74,8 @@ public class Overview extends BaseActivity {
         btnSavings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Savings Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to SavingsActivity if implemented
+                Intent intent = new Intent(Overview.this, SavingsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -84,8 +83,8 @@ public class Overview extends BaseActivity {
         btnRemind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Remind Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to RemindActivity if implemented
+                Intent intent = new Intent(Overview.this, ReminderActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -93,8 +92,8 @@ public class Overview extends BaseActivity {
         btnBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Budget Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to BudgetActivity if implemented
+                Intent intent = new Intent(Overview.this, TotalExpenses.class);
+                startActivity(intent);
             }
         });
 
@@ -105,6 +104,11 @@ public class Overview extends BaseActivity {
     @Override
     protected int getSelectedNavItemId() {
         return R.id.nav_home; // Highlight the "Home" item
+    }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
     }
 
     private void populateSampleEntries() {

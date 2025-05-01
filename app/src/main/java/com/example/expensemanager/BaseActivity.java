@@ -2,6 +2,7 @@ package com.example.expensemanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // Abstract method to define the selected navigation item for each activity
     protected abstract int getSelectedNavItemId();
+
+    // Abstract method to define the FAB target activity for each activity
+    protected abstract Class<?> getFabTargetActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +63,21 @@ public abstract class BaseActivity extends AppCompatActivity {
             return false;
         });
 
-        // Handle FAB click
+        // Handle FAB click based on the target activity
         fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, Add.class);
-            startActivityForResult(intent, 1);
+            Class<?> targetActivity = getFabTargetActivity();
+            Log.d("BaseActivity", "FAB Target Activity: " + (targetActivity != null ? targetActivity.getSimpleName() : "null") + " from " + this.getClass().getSimpleName());
+            if (targetActivity != null) {
+                try {
+                    Intent intent = new Intent(this, targetActivity);
+                    startActivityForResult(intent, 1);
+                    Log.d("BaseActivity", "Started activity: " + targetActivity.getSimpleName());
+                } catch (Exception e) {
+                    Log.e("BaseActivity", "Failed to start activity: " + targetActivity.getSimpleName(), e);
+                }
+            } else {
+                Log.w("BaseActivity", "FAB target activity is null in " + this.getClass().getSimpleName());
+            }
         });
     }
 
@@ -70,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 1) {
-            Toast.makeText(this, "Entry added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
         }
     }
 }

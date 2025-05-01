@@ -64,6 +64,11 @@ public class Entries extends BaseActivity {
         return R.id.nav_home; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
+    }
+
     private void showAddEntryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Entry");

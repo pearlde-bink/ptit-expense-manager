@@ -3,104 +3,79 @@ package com.example.expensemanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensemanager.adapter.ReminderAdapter;
 import com.example.expensemanager.model.Reminder;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ReminderActivity extends BaseActivity {
-    private ReminderAdapter adapter;
+
+    private RecyclerView remindersRecyclerView;
+    private ReminderAdapter reminderAdapter;
     private List<Reminder> reminders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reminder);
 
+        // Initialize views
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        remindersRecyclerView = findViewById(R.id.reminders_recycler_view);
+
+        // Set up Toolbar
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         // Initialize reminders list
-        reminders = getSampleReminders();
+        reminders = new ArrayList<>();
+        populateSampleReminders();
 
-//        Setup RecycleView
-        RecyclerView recyclerView = findViewById(R.id.reminder_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(new ReminderAdapter(getSampleReminders()));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(true);
-        adapter = new ReminderAdapter(this, reminders);
-        recyclerView.setAdapter(adapter);
+        // Set up RecyclerView
+        reminderAdapter = new ReminderAdapter(this, reminders);
+        remindersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        remindersRecyclerView.setAdapter(reminderAdapter);
 
-        // Set up Back Arrow
-        ImageView backArrow = findViewById(R.id.back_arrow);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Go back to the previous screen
-            }
-        });
-
-        // Set up Bottom Navigation
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
-
-        // Highlight the Reminder item
-        bottomNavigation.setSelectedItemId(R.id.nav_settings);
-
-
-        // Handle BottomNavigationView item clicks
+        // Set up bottom navigation
         setupBottomNavigation();
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_settings; // Highlight the "Entries" item (as a placeholder, adjust as needed)
+        return R.id.nav_settings;
+    }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return AddReminder.class; // FAB leads to AddReminderActivity
+    }
+
+    private void populateSampleReminders() {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(2024, Calendar.MAY, 26);
+        reminders.add(new Reminder("Bill Payment", 200, calendar.getTime(), "Monthly", true));
+        reminders.add(new Reminder("Car Loan", 2000, calendar.getTime(), "Monthly", true));
+        reminders.add(new Reminder("iPhone 15 Pro", 1000, calendar.getTime(), "One-Time", true));
+        calendar.set(2024, Calendar.SEPTEMBER, 11);
+        reminders.add(new Reminder("New Bike", 500, calendar.getTime(), "One-Time", false));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-            Reminder updatedReminder = (Reminder) data.getSerializableExtra("updated_reminder");
-            int position = data.getIntExtra("position", -1);
-            if (position != -1 && updatedReminder != null) {
-                adapter.updateReminder(position, updatedReminder);
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            Reminder newReminder = (Reminder) data.getSerializableExtra("new_reminder");
+            if (newReminder != null) {
+                reminders.add(newReminder);
+                reminderAdapter.notifyDataSetChanged();
             }
         }
-    }
-
-    // Sample data for the RecyclerView
-    private List<Reminder> getSampleReminders() {
-        List<Reminder> reminders = new ArrayList<>();
-        reminders.add(new Reminder("24 May 2024", "Bill Payment", false, 360.0, "24 June 2024"));
-        reminders.add(new Reminder("15 April 2024", "Rent Payment", true, 1200.0, "15 May 2024"));
-        reminders.add(new Reminder("01 June 2024", "Grocery Shopping", false, 150.0, "01 July 2024"));
-        reminders.add(new Reminder("10 May 2024", "Car Insurance", true, 450.0, "10 June 2024"));
-        reminders.add(new Reminder("20 June 2024", "Internet Bill", false, 60.0, "20 July 2024"));
-        reminders.add(new Reminder("05 May 2024", "Credit Card Payment", true, 800.0, "05 June 2024"));
-        reminders.add(new Reminder("30 April 2024", "Gym Membership", false, 50.0, "30 May 2024"));
-        reminders.add(new Reminder("12 June 2024", "Phone Bill", true, 45.0, "12 July 2024"));
-        reminders.add(new Reminder("25 May 2024", "Electricity Bill", false, 200.0, "25 June 2024"));
-        reminders.add(new Reminder("18 April 2024", "Water Bill", true, 30.0, "18 May 2024"));
-        return reminders;
     }
 }

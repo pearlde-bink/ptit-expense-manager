@@ -15,6 +15,15 @@
         android:theme="@style/Theme.ExpenseManager"
         tools:targetApi="31">
         <activity
+            android:name=".Overview"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".TotalExpenses"
             android:exported="true">
             <intent-filter>
@@ -29,15 +38,6 @@
         <activity
             android:name=".FragmentSpends"
             android:exported="false" />
-        <activity
-            android:name=".Overview"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".Add"
             android:exported="true">
@@ -80,14 +80,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddGoal"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".AddGoal"/>
+        <activity
+            android:name=".AddReminder"
+            android:exported="false" />
         <activity
             android:name=".ItemGoal"
             android:exported="false" />

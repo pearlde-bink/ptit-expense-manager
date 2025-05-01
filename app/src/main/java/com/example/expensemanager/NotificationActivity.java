@@ -49,6 +49,11 @@ public class NotificationActivity extends BaseActivity {
         return R.id.nav_notifications; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return null;
+    }
+
     // Sample data for the RecyclerView
     private List<Notification> getSampleNotifications() {
         List<Notification> notifications = new ArrayList<>();

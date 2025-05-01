@@ -1,5 +1,6 @@
 package com.example.expensemanager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SavingsActivity extends AppCompatActivity {
+public class SavingsActivity extends BaseActivity {
 
     private GoalAdapter adapter;
     private List<Goal> goals;
@@ -55,36 +56,12 @@ public class SavingsActivity extends AppCompatActivity {
         FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Highlight the Reminder item
-        bottomNavigation.setSelectedItemId(R.id.nav_settings);
+        setupBottomNavigation();
+    }
 
-        // Handle BottomNavigationView item clicks
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if(item.getItemId() == R.id.nav_home) {
-                Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            }else if(item.getItemId() == R.id.nav_list){
-                Toast.makeText(this, "List Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            }else if(item.getItemId() == R.id.nav_notifications){
-                // Already on this screen
-                return true;
-            }else if(item.getItemId() == R.id.nav_settings){
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else{
-                return false;
-            }
-        });
-
-
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(SavingsActivity.this, "Add Button Clicked", Toast.LENGTH_SHORT).show();
-                // Add your logic here (e.g., open a new screen to add a goal)
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_list; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
     @Override

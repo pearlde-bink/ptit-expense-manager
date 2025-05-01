@@ -15,7 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationActivity extends AppCompatActivity {
+public class NotificationActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,35 +41,12 @@ public class NotificationActivity extends AppCompatActivity {
         FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Highlight the Notifications item
-        bottomNavigation.setSelectedItemId(R.id.nav_notifications);
+        setupBottomNavigation();
+    }
 
-        // Handle BottomNavigationView item clicks
-        bottomNavigation.setOnItemSelectedListener(item -> {
-               if(item.getItemId() == R.id.nav_home) {
-                    Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show();
-                    return true;
-               }else if(item.getItemId() == R.id.nav_list){
-                    Toast.makeText(this, "List Selected", Toast.LENGTH_SHORT).show();
-                    return true;
-               }else if(item.getItemId() == R.id.nav_notifications){
-                    // Already on this screen
-                    return true;
-               }else if(item.getItemId() == R.id.nav_settings){
-                    Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                    return true;
-               } else{
-                   return false;
-               }
-        });
-
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(NotificationActivity.this, "Add Button Clicked", Toast.LENGTH_SHORT).show();
-                // Add your logic here (e.g., open a new screen to add an item)
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_notifications; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
     // Sample data for the RecyclerView

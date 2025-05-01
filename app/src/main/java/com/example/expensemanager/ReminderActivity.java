@@ -22,7 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReminderActivity extends AppCompatActivity {
+public class ReminderActivity extends BaseActivity {
     private ReminderAdapter adapter;
     private List<Reminder> reminders;
 
@@ -62,38 +62,18 @@ public class ReminderActivity extends AppCompatActivity {
 
 
         // Handle BottomNavigationView item clicks
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if(item.getItemId() == R.id.nav_home) {
-                Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            }else if(item.getItemId() == R.id.nav_list){
-                Toast.makeText(this, "List Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            }else if(item.getItemId() == R.id.nav_notifications){
-                // Already on this screen
-                return true;
-            }else if(item.getItemId() == R.id.nav_settings){
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else{
-                return false;
-            }
-        });
-
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ReminderActivity.this, "Add Button Clicked", Toast.LENGTH_SHORT).show();
-                // Add your logic here (e.g., open a new screen to add an item)
-            }
-        });
+        setupBottomNavigation();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_settings; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
     @Override

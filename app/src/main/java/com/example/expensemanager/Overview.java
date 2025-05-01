@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Overview extends AppCompatActivity {
+public class Overview extends BaseActivity {
 
     private TextView totalSalaryValue;
     private TextView totalExpenseValue;
@@ -45,8 +45,8 @@ public class Overview extends AppCompatActivity {
         MaterialButton btnRemind = findViewById(R.id.btn_remind);
         MaterialButton btnBudget = findViewById(R.id.btn_budget);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
+//        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+//        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Initialize entries list
         entries = new ArrayList<>();
@@ -99,35 +99,12 @@ public class Overview extends AppCompatActivity {
         });
 
         // Set up Bottom Navigation
-        bottomNavigation.setSelectedItemId(R.id.nav_home); // Highlight the Home item
+        setupBottomNavigation();
+    }
 
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                // Already on this screen
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                Intent intent = new Intent(Overview.this, Entries.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Overview.this, Add.class);
-                startActivityForResult(intent, 1);
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_home; // Highlight the "Home" item
     }
 
     private void populateSampleEntries() {

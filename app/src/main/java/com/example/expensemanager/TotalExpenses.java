@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class TotalExpenses extends AppCompatActivity {
+public class TotalExpenses extends BaseActivity{
 
     private Toolbar toolbar;
     private TextView dateText;
@@ -51,7 +51,8 @@ public class TotalExpenses extends AppCompatActivity {
         totalExpenseValue = findViewById(R.id.total_expense_value);
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
+
+//        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Set up Toolbar
         setSupportActionBar(toolbar);
@@ -95,36 +96,13 @@ public class TotalExpenses extends AppCompatActivity {
         totalExpenseValue.setText("$1,600");
 
         // Set up Bottom Navigation
-        com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        bottomNavigation.setSelectedItemId(R.id.nav_list); // Highlight the Entries item (as a placeholder)
-
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                Intent intent = new Intent(TotalExpenses.this, Overview.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                Intent intent = new Intent(TotalExpenses.this, Entries.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // Handle FAB click
-        fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(TotalExpenses.this, Add.class);
-            startActivityForResult(intent, 1);
-        });
+        setupBottomNavigation();
     }
 
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_home; // Highlight the "Entries" item (as a placeholder, adjust as needed)
+    }
     private void updateDateAndCalendar() {
         // Update date text
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM - yyyy", Locale.getDefault());

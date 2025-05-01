@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Entries extends AppCompatActivity {
+public class Entries extends BaseActivity {
 
     private RecyclerView entriesRecyclerView;
     private EntryAdapter entryAdapter;
@@ -56,33 +56,17 @@ public class Entries extends AppCompatActivity {
         });
 
         // Set up Bottom Navigation
-        bottomNavigation.setSelectedItemId(R.id.nav_list); // Highlight the Entries item
+        setupBottomNavigation();
+    }
 
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                // Already on this screen
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_home; // Highlight the "Entries" item (as a placeholder, adjust as needed)
+    }
 
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddEntryDialog();
-            }
-        });
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
     }
 
     private void showAddEntryDialog() {

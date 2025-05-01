@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class TotalExpenses extends AppCompatActivity {
+public class TotalExpenses extends BaseActivity{
 
     private Toolbar toolbar;
     private TextView dateText;
@@ -51,7 +51,8 @@ public class TotalExpenses extends AppCompatActivity {
         totalExpenseValue = findViewById(R.id.total_expense_value);
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
+
+//        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Set up Toolbar
         setSupportActionBar(toolbar);
@@ -95,34 +96,17 @@ public class TotalExpenses extends AppCompatActivity {
         totalExpenseValue.setText("$1,600");
 
         // Set up Bottom Navigation
-        com.google.android.material.bottomnavigation.BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        bottomNavigation.setSelectedItemId(R.id.nav_list); // Highlight the Entries item (as a placeholder)
+        setupBottomNavigation();
+    }
 
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                Intent intent = new Intent(TotalExpenses.this, Overview.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                Intent intent = new Intent(TotalExpenses.this, Entries.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_home; // Highlight the "Entries" item (as a placeholder, adjust as needed)
+    }
 
-        // Handle FAB click
-        fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(TotalExpenses.this, Add.class);
-            startActivityForResult(intent, 1);
-        });
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
     }
 
     private void updateDateAndCalendar() {
@@ -195,7 +179,18 @@ public class TotalExpenses extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 1) {
-            Toast.makeText(this, "Entry added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
+            // Notify fragments to refresh their data
+            FragmentSpends spendsFragment = (FragmentSpends) getSupportFragmentManager()
+                    .findFragmentByTag("f" + viewPager.getCurrentItem());
+            FragmentCategories categoriesFragment = (FragmentCategories) getSupportFragmentManager()
+                    .findFragmentByTag("f" + viewPager.getCurrentItem());
+            if (spendsFragment != null) {
+                // Update SpendsFragment (you'll need to expose a method to refresh its data)
+            }
+            if (categoriesFragment != null) {
+                // Update CategoriesFragment (you'll need to expose a method to refresh its data)
+            }
         }
     }
 }

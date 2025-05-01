@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--in reminders screen, to add new reminders-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:id="@id/main">
+    android:padding="24dp"
+    android:clipToPadding="false">
 
     <!-- Back Arrow -->
     <ImageView
@@ -24,152 +24,117 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:gravity="center"
         android:text="Set Reminder"
         android:textSize="24sp"
+        android:gravity="center"
         android:textStyle="bold"
         android:textColor="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/back_arrow"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Bill Type Dropdown -->
-    <TextView
-        android:id="@+id/tvSelectBill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Bill"
-        android:textSize="20dp"
-        android:textColor="@color/DimGray"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintLeft_toLeftOf="@+id/title"
-        android:layout_marginTop="30dp"
-        ></TextView>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/bill_type_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="Select Bill"
+        android:layout_marginTop="24dp"
+        android:hint="Bill Type"
         app:endIconMode="dropdown_menu"
-        app:layout_constraintTop_toBottomOf="@id/tvSelectBill"
+        app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/bill_type_input"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Amount Input -->
-    <TextView
-        android:id="@+id/tvAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount"
-        android:textSize="20dp"
-        android:textColor="@color/DimGray"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/bill_type_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/bill_type_layout"
-        android:layout_marginTop="20dp"
-        ></TextView>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/amount_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="16dp"
         android:hint="Amount"
         app:endIconDrawable="@drawable/ic_dollar"
-        app:layout_constraintTop_toBottomOf="@id/tvAmount"
+        app:layout_constraintTop_toBottomOf="@id/bill_type_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/amount_input"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Frequency Dropdown -->
-    <TextView
-        android:id="@+id/tvFrequency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Frequency"
-        android:textSize="20dp"
-        android:textColor="@color/DimGray"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/amount_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/amount_layout"
-        android:layout_marginTop="20dp"
-        ></TextView>
+    <!-- Frequency Dropdown -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/frequency_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="16dp"
         android:hint="Frequency"
         app:endIconMode="dropdown_menu"
-        app:layout_constraintTop_toBottomOf="@id/tvFrequency"
+        app:layout_constraintTop_toBottomOf="@id/amount_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/frequency_input"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Date Picker -->
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:textSize="20dp"
-        android:textColor="@color/DimGray"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/frequency_layout"
-        app:layout_constraintLeft_toLeftOf="@+id/frequency_layout"
-        android:layout_marginTop="20dp"
-        ></TextView>
+    <!-- Date Picker -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="Date"
+        android:layout_marginTop="16dp"
+        android:hint="Due Date"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_calendar"
-        app:layout_constraintTop_toBottomOf="@id/tvDate"
+        app:layout_constraintTop_toBottomOf="@id/frequency_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/date_input"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:inputType="none"
-        android:focusable="false"
-        android:focusableInTouchMode="false" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/date_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Set Reminder Button -->
+    <!-- State Switch -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/state_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Active"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/date_layout"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Set Reminder Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_set_reminder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="24dp"
         android:text="SET REMINDER"
         android:textColor="@android:color/white"
         app:cornerRadius="8dp"
         style="@style/Widget.Material3.Button.ElevatedButton"
         app:backgroundTint="@color/Blue"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/state_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

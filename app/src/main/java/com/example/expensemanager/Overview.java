@@ -14,6 +14,7 @@ import com.example.expensemanager.adapter.EntryAdapter;
 import com.example.expensemanager.model.Entry;
 import com.example.expensemanager.model.Expense;
 import com.example.expensemanager.model.Income;
+import com.example.expensemanager.model.Reminder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Overview extends AppCompatActivity {
+public class Overview extends BaseActivity {
 
     private TextView totalSalaryValue;
     private TextView totalExpenseValue;
@@ -45,8 +46,6 @@ public class Overview extends AppCompatActivity {
         MaterialButton btnRemind = findViewById(R.id.btn_remind);
         MaterialButton btnBudget = findViewById(R.id.btn_budget);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Initialize entries list
         entries = new ArrayList<>();
@@ -75,8 +74,8 @@ public class Overview extends AppCompatActivity {
         btnSavings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Savings Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to SavingsActivity if implemented
+                Intent intent = new Intent(Overview.this, SavingsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -84,8 +83,8 @@ public class Overview extends AppCompatActivity {
         btnRemind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Remind Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to RemindActivity if implemented
+                Intent intent = new Intent(Overview.this, ReminderActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -93,41 +92,23 @@ public class Overview extends AppCompatActivity {
         btnBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Overview.this, "Budget Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to BudgetActivity if implemented
+                Intent intent = new Intent(Overview.this, TotalExpenses.class);
+                startActivity(intent);
             }
         });
 
         // Set up Bottom Navigation
-        bottomNavigation.setSelectedItemId(R.id.nav_home); // Highlight the Home item
+        setupBottomNavigation();
+    }
 
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                // Already on this screen
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                Intent intent = new Intent(Overview.this, Entries.class);
-                startActivity(intent);
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_home; // Highlight the "Home" item
+    }
 
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Overview.this, Add.class);
-                startActivityForResult(intent, 1);
-            }
-        });
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return Add.class; // FAB leads to AddActivity (for adding income/expense)
     }
 
     private void populateSampleEntries() {

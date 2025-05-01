@@ -1,22 +1,21 @@
 package com.example.expensemanager.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Goal implements Serializable {
-    private int iconResId;
     private String title;
     private double currentAmount;
     private double targetAmount;
+    private String contributionType; // New field
+    private Date deadline;         // New field
 
-    public Goal(int iconResId, String title, double currentAmount, double targetAmount) {
-        this.iconResId = iconResId;
+    public Goal(String title, double currentAmount, double targetAmount, String contributionType, Date deadline) {
         this.title = title;
         this.currentAmount = currentAmount;
         this.targetAmount = targetAmount;
-    }
-
-    public int getIconResId() {
-        return iconResId;
+        this.contributionType = contributionType;
+        this.deadline = deadline;
     }
 
     public String getTitle() {
@@ -29,6 +28,14 @@ public class Goal implements Serializable {
 
     public double getTargetAmount() {
         return targetAmount;
+    }
+
+    public String getContributionType() {
+        return contributionType;
+    }
+
+    public Date getDeadline() {
+        return deadline;
     }
 
     public int getProgress() {

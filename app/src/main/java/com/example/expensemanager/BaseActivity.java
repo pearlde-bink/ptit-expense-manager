@@ -2,37 +2,29 @@ package com.example.expensemanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class BottomNavigation extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_bottom_navigation);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-    }
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected BottomNavigationView bottomNavigation;
     protected FloatingActionButton fabAdd;
 
     // Abstract method to define the selected navigation item for each activity
-    protected int getSelectedNavItemId() {
-        return 0;
+    protected abstract int getSelectedNavItemId();
+
+    // Abstract method to define the FAB target activity for each activity
+    protected abstract Class<?> getFabTargetActivity();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Set the content view in the child class before calling setupBottomNavigation
     }
 
     protected void setupBottomNavigation() {
@@ -40,7 +32,10 @@ public class BottomNavigation extends AppCompatActivity {
         fabAdd = findViewById(R.id.fab_add);
 
         // Highlight the correct navigation item
-        bottomNavigation.setSelectedItemId(getSelectedNavItemId());
+        int selectedItemId = getSelectedNavItemId();
+        if (selectedItemId != -1) {
+            bottomNavigation.setSelectedItemId(selectedItemId);
+        }
 
         // Handle navigation item clicks
         bottomNavigation.setOnItemSelectedListener(item -> {
@@ -52,13 +47,9 @@ public class BottomNavigation extends AppCompatActivity {
             } else if (itemId == R.id.nav_list) {
                 targetActivity = SavingsActivity.class;
             } else if (itemId == R.id.nav_notifications) {
-//                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
                 targetActivity = NotificationActivity.class;
-//                return true;
             } else if (itemId == R.id.nav_settings) {
-//                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
                 targetActivity = ReminderActivity.class;
-//                return true;
             }
 
             // If we're already on the target activity, do nothing
@@ -72,10 +63,21 @@ public class BottomNavigation extends AppCompatActivity {
             return false;
         });
 
-        // Handle FAB click
+        // Handle FAB click based on the target activity
         fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, Add.class);
-            startActivityForResult(intent, 1);
+            Class<?> targetActivity = getFabTargetActivity();
+            Log.d("BaseActivity", "FAB Target Activity: " + (targetActivity != null ? targetActivity.getSimpleName() : "null") + " from " + this.getClass().getSimpleName());
+            if (targetActivity != null) {
+                try {
+                    Intent intent = new Intent(this, targetActivity);
+                    startActivityForResult(intent, 1);
+                    Log.d("BaseActivity", "Started activity: " + targetActivity.getSimpleName());
+                } catch (Exception e) {
+                    Log.e("BaseActivity", "Failed to start activity: " + targetActivity.getSimpleName(), e);
+                }
+            } else {
+                Log.w("BaseActivity", "FAB target activity is null in " + this.getClass().getSimpleName());
+            }
         });
     }
 
@@ -83,7 +85,7 @@ public class BottomNavigation extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 1) {
-            Toast.makeText(this, "Entry added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Added successfully", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,14 +12,12 @@ import com.example.expensemanager.adapter.EntryAdapter;
 import com.example.expensemanager.model.Entry;
 import com.example.expensemanager.model.Expense;
 import com.example.expensemanager.model.Income;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Add extends AppCompatActivity {
+public class Add extends BaseActivity {
 
     private RecyclerView entriesRecyclerView;
     private EntryAdapter entryAdapter;
@@ -36,8 +33,6 @@ public class Add extends AppCompatActivity {
         MaterialButton btnAddIncome = findViewById(R.id.btn_add_income);
         MaterialButton btnAddExpense = findViewById(R.id.btn_add_expense);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        FloatingActionButton fabAdd = findViewById(R.id.fab_add);
 
         // Initialize entries list
         entries = new ArrayList<>();
@@ -75,35 +70,18 @@ public class Add extends AppCompatActivity {
         });
 
         // Set up Bottom Navigation
-        bottomNavigation.setSelectedItemId(R.id.nav_list); // Highlight the Entries item
+        setupBottomNavigation();
 
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
-                Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_list) {
-                // Already on this screen
-                return true;
-            } else if (item.getItemId() == R.id.nav_notifications) {
-                Toast.makeText(this, "Notifications Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
-            } else {
-                return false;
-            }
-        });
+    }
 
-        // Handle FAB click
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Since we already have buttons for adding income/expense, we can make the FAB redundant
-                // Alternatively, we can show the same dialog as in EntriesActivity
-                Toast.makeText(Add.this, "Use the buttons above to add an entry", Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    protected int getSelectedNavItemId() {
+        return -1; // No item highlighted, as this is an intermediate screen
+    }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return null; // No FAB action since we're already in Add
     }
 
     private void populateSampleEntries() {
@@ -140,6 +118,10 @@ public class Add extends AppCompatActivity {
                             false
                     ));
                     entryAdapter.notifyDataSetChanged();
+                    // Forward the result to the calling activity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("new_income", newIncome);
+                    setResult(RESULT_OK, resultIntent);
                 }
             } else if (requestCode == 2) {
                 // Handle new expense
@@ -155,6 +137,10 @@ public class Add extends AppCompatActivity {
                             true
                     ));
                     entryAdapter.notifyDataSetChanged();
+                    // Forward the result to the calling activity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("new_expense", newExpense);
+                    setResult(RESULT_OK, resultIntent);
                 }
             }
         }

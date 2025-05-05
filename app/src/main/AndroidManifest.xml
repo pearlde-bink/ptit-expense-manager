@@ -15,7 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ExpenseManager"
         tools:targetApi="31">
+      <activity android:name=".BudgetActivity"
+            android:exported="false" />
         <activity
+           
             android:name=".AuthenLogin"
             android:exported="true">
             <intent-filter>
@@ -89,8 +92,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".AddGoal"/>
+        <activity android:name=".AddGoal" />
         <activity
             android:name=".AddReminder"
             android:exported="false" />

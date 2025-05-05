@@ -1,6 +1,8 @@
 package com.example.expensemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,14 @@ public class OnBoarding4 extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // Setup LET’S GO button to open OnBoarding3
+        Button btnLetsGo = findViewById(R.id.btn_lets_go);
+        btnLetsGo.setOnClickListener(v -> {
+            Intent intent = new Intent(OnBoarding4.this, Overview.class);
+            startActivity(intent);
+            finish(); // Optional: remove OnBoarding2 from back stack
         });
     }
 }

@@ -59,6 +59,10 @@ public class BottomNavigation extends AppCompatActivity {
 //                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
                 targetActivity = ReminderActivity.class;
 //                return true;
+            } else if (itemId == R.id.nav_budget) {
+//                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
+                targetActivity = BudgetActivity.class;
+//                return true;
             }
 
             // If we're already on the target activity, do nothing

@@ -44,14 +44,14 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         holder.period.setText(budget.getMonth() + "/" + budget.getYear());
 
         // Map categoryId to category name
-        String categoryName = "Unknown";
-        for (Category category : categories) {
-            if (category.getId() == budget.getCategoryId()) {
-                categoryName = category.getTitle();
-                break;
-            }
-        }
-        holder.category.setText(categoryName);
+//        String categoryName = "Unknown";
+//        for (Category category : categories) {
+//            if (category.getId() == budget.getCategoryId()) {
+//                categoryName = category.getTitle();
+//                break;
+//            }
+//        }
+//        holder.category.setText(categoryName);
     }
 
     @Override
@@ -60,13 +60,13 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
     static class BudgetViewHolder extends RecyclerView.ViewHolder {
-        TextView category;
+//        TextView category;
         TextView amount;
         TextView period;
 
         BudgetViewHolder(@NonNull View itemView) {
             super(itemView);
-            category = itemView.findViewById(R.id.budget_category);
+//            category = itemView.findViewById(R.id.budget_category);
             amount = itemView.findViewById(R.id.budget_amount);
             period = itemView.findViewById(R.id.budget_period);
         }

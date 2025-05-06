@@ -27,7 +27,7 @@ public class ReminderActivity extends BaseActivity {
 
         // Initialize views
         Toolbar toolbar = findViewById(R.id.toolbar);
-        remindersRecyclerView = findViewById(R.id.reminders_recycler_view);
+        remindersRecyclerView = findViewById(R.id.reminder_recycler_view);
 
         // Set up Toolbar
         setSupportActionBar(toolbar);

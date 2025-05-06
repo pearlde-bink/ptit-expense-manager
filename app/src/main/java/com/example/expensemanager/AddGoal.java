@@ -13,15 +13,24 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.example.expensemanager.model.Goal;
+import com.example.expensemanager.api.GoalService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddGoal extends BaseActivity {
     private static final String TAG = "AddGoal";
+    private static final String BASE_URL = "http://10.0.2.2:3000";
     private TextInputEditText goalTitleInput;
     private TextInputEditText amountInput;
     private MaterialAutoCompleteTextView contributionTypeInput;
@@ -88,12 +97,50 @@ public class AddGoal extends BaseActivity {
                 return;
             }
 
-            Goal newGoal = new Goal(goalTitle, 0.0, amount, contributionType, selectedDate.getTime());
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("new_goal", newGoal);
-            setResult(RESULT_OK, resultIntent);
-            Log.d(TAG, "Setting result and finishing");
-            finish();
+            // Convert deadline from "dd/MM/yyyy" to "yyyy-MM-dd" for API
+            String apiDeadline;
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                apiDeadline = outputFormat.format(inputFormat.parse(deadline));
+            } catch (ParseException e) {
+                Toast.makeText(AddGoal.this, "Invalid date format", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Goal newGoal = new Goal(1, goalTitle, 0.0, amount, contributionType, apiDeadline);
+//            Intent resultIntent = new Intent();
+//            resultIntent.putExtra("new_goal", newGoal);
+//            setResult(RESULT_OK, resultIntent);
+//            Log.d(TAG, "Setting result and finishing");
+//            finish();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            GoalService goalService = retrofit.create(GoalService.class);
+
+            goalService.createGoal(newGoal).enqueue(new Callback<Goal>() {
+                @Override
+                public void onResponse(Call<Goal> call, Response<Goal> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(AddGoal.this, "Goal created", Toast.LENGTH_SHORT).show();
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("new_goal", response.body());
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        Toast.makeText(AddGoal.this, "Failed to create goal", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error: " + response.code() + " - " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Goal> call, Throwable t) {
+                    Toast.makeText(AddGoal.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failure: " + t.getMessage(), t);
+                }
+            });
         });
 
         // Set up bottom navigation
@@ -106,35 +153,35 @@ public class AddGoal extends BaseActivity {
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart called");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume called");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause called");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop called");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy called");
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        Log.d(TAG, "onStart called");
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.d(TAG, "onResume called");
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Log.d(TAG, "onPause called");
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.d(TAG, "onStop called");
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        Log.d(TAG, "onDestroy called");
+//    }
 
     private void showDatePickerDialog() {
         int year = selectedDate.get(Calendar.YEAR);
@@ -152,7 +199,7 @@ public class AddGoal extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_list; // Keep the Savings item highlighted
+        return R.id.nav_list;
     }
 
     @Override

@@ -3,14 +3,17 @@ package com.example.expensemanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public abstract class BaseActivity extends AppCompatActivity {
+    private static final String TAG = "BaseActivity";
 
     protected BottomNavigationView bottomNavigation;
     protected FloatingActionButton fabAdd;
@@ -22,13 +25,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract Class<?> getFabTargetActivity();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Set the content view in the child class before calling setupBottomNavigation
     }
 
     protected void setupBottomNavigation() {
         bottomNavigation = findViewById(R.id.bottom_navigation);
+        if (bottomNavigation == null) {
+            Log.w(TAG, "BottomNavigationView not found in " + this.getClass().getSimpleName());
+            return; // Skip setup if BottomNavigationView is not present
+        }
         fabAdd = findViewById(R.id.fab_add);
 
         // Highlight the correct navigation item
@@ -50,6 +57,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 targetActivity = NotificationActivity.class;
             } else if (itemId == R.id.nav_settings) {
                 targetActivity = ReminderActivity.class;
+            }else if (itemId == R.id.nav_budget) {
+                targetActivity = BudgetActivity.class;
             }
 
             // If we're already on the target activity, do nothing
@@ -64,21 +73,43 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
 
         // Handle FAB click based on the target activity
-        fabAdd.setOnClickListener(v -> {
-            Class<?> targetActivity = getFabTargetActivity();
-            Log.d("BaseActivity", "FAB Target Activity: " + (targetActivity != null ? targetActivity.getSimpleName() : "null") + " from " + this.getClass().getSimpleName());
-            if (targetActivity != null) {
-                try {
-                    Intent intent = new Intent(this, targetActivity);
-                    startActivityForResult(intent, 1);
-                    Log.d("BaseActivity", "Started activity: " + targetActivity.getSimpleName());
-                } catch (Exception e) {
-                    Log.e("BaseActivity", "Failed to start activity: " + targetActivity.getSimpleName(), e);
-                }
+//        fabAdd.setOnClickListener(v -> {
+//            Class<?> targetActivity = getFabTargetActivity();
+//            Log.d("BaseActivity", "FAB Target Activity: " + (targetActivity != null ? targetActivity.getSimpleName() : "null") + " from " + this.getClass().getSimpleName());
+//            if (targetActivity != null) {
+//                try {
+//                    Intent intent = new Intent(this, targetActivity);
+//                    startActivityForResult(intent, 1);
+//                    Log.d("BaseActivity", "Started activity: " + targetActivity.getSimpleName());
+//                } catch (Exception e) {
+//                    Log.e("BaseActivity", "Failed to start activity: " + targetActivity.getSimpleName(), e);
+//                }
+//            } else {
+//                Log.w("BaseActivity", "FAB target activity is null in " + this.getClass().getSimpleName());
+//            }
+//        });
+        if (fabAdd != null) {
+            if (getFabTargetActivity() != null) {
+                fabAdd.setVisibility(View.VISIBLE);
+                fabAdd.setOnClickListener(v -> {
+                    Class<?> targetActivity = getFabTargetActivity();
+                    Log.d(TAG, "FAB Target Activity: " + (targetActivity != null ? targetActivity.getSimpleName() : "null") + " from " + this.getClass().getSimpleName());
+                    if (targetActivity != null) {
+                        try {
+                            Intent intent = new Intent(this, targetActivity);
+                            startActivityForResult(intent, 1);
+                            Log.d(TAG, "Started activity: " + targetActivity.getSimpleName());
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to start activity: " + targetActivity.getSimpleName(), e);
+                        }
+                    } else {
+                        Log.w(TAG, "FAB target activity is null in " + this.getClass().getSimpleName());
+                    }
+                });
             } else {
-                Log.w("BaseActivity", "FAB target activity is null in " + this.getClass().getSimpleName());
+                fabAdd.setVisibility(View.GONE);
             }
-        });
+        }
     }
 
     @Override

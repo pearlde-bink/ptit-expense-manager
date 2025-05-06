@@ -18,7 +18,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AddBudgetActivity extends AppCompatActivity {
+//public class AddBudgetActivity extends AppCompatActivity {
+public class AddBudgetActivity extends BaseActivity {
     private EditText amountInput;
     private Spinner monthSpinner, yearSpinner, categorySpinner;
     private MaterialButton btnAddBudget;
@@ -86,5 +87,18 @@ public class AddBudgetActivity extends AppCompatActivity {
                 });
             }
         });
+
+        // Set up bottom navigation
+        setupBottomNavigation();
+    }
+
+    @Override
+    protected int getSelectedNavItemId() {
+        return -1; // No bottom navigation item highlighted
+    }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return null; // No FAB action in this screen
     }
 }

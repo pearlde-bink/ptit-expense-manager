@@ -71,6 +71,11 @@
             android:text="$600"
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray" />
+        <TextView
+            android:id="@+id/goal_deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

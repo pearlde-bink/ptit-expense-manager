@@ -39,7 +39,7 @@
 
             <!-- Reminders List -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/reminders_recycler_view"
+                android:id="@+id/reminder_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="80dp" />
@@ -55,62 +55,3 @@
         android:layout_gravity="bottom" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--&lt;!&ndash;in reminders screen, to list all reminder&ndash;&gt;-->
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:id="@+id/main"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:padding="16dp"-->
-<!--    tools:context=".ReminderActivity">-->
-
-<!--    &lt;!&ndash; Back Arrow &ndash;&gt;-->
-<!--    <ImageView-->
-<!--        android:id="@+id/back_arrow"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@drawable/ic_back_arrow"-->
-<!--        android:contentDescription="Back"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--    &lt;!&ndash; Title &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:id="@+id/title"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:text="Reminder"-->
-<!--        android:textSize="24sp"-->
-<!--        android:textStyle="bold"-->
-<!--        android:textColor="@android:color/black"-->
-<!--        android:gravity="center"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/back_arrow"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--    &lt;!&ndash; RecyclerView for Notifications &ndash;&gt;-->
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/reminder_list"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/title"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_layout"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        tools:listitem="@layout/activity_item_reminder" />-->
-
-<!--    &lt;!&ndash; Include Bottom Navigation &ndash;&gt;-->
-<!--    <include-->
-<!--        android:id="@+id/bottom_navigation_layout"-->
-<!--        layout="@layout/activity_bottom_navigation"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

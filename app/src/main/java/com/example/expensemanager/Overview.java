@@ -64,7 +64,7 @@ public class Overview extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(Overview.this, "Profile Clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to ProfileActivity if implemented
+                // Navigate to ProfileActivity
                 // Intent intent = new Intent(OverviewActivity.this, ProfileActivity.class);
                 // startActivity(intent);
             }
@@ -127,6 +127,7 @@ public class Overview extends BaseActivity {
         entries.add(new Entry(calendar.getTime(), "Shopping", 400, "Shopping", 0.12, "Paytm", true));
     }
 
+    // to display total salary and expense and monthly
     private void updateFinancialSummary() {
         double totalIncome = 0;
         double totalExpense = 0;

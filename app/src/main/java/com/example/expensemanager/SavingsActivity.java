@@ -3,7 +3,6 @@ package com.example.expensemanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,22 +14,16 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensemanager.adapter.GoalAdapter;
+import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.GoalService;
 import com.example.expensemanager.model.Goal;
-import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SavingsActivity extends BaseActivity {
     private static final String TAG = "SavingsActivity";
@@ -92,66 +85,50 @@ public class SavingsActivity extends BaseActivity {
         return AddGoal.class; // FAB leads to AddGoal
     }
     private void fetchGoals() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/goal")
-                .build();
+        String token = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("accessToken", "");
+        GoalService goalService = ApiClient.getClient().create(GoalService.class);
 
-        client.newCall(request).enqueue(new Callback() {
+        goalService.getGoals("Bearer " + token).enqueue(new Callback<List<Goal>>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(SavingsActivity.this, "Network error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "API call failed", e);
-                });
+            public void onResponse(Call<List<Goal>> call, Response<List<Goal>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    goals.clear();
+                    goals.addAll(response.body());
+                    goalAdapter.setGoals(goals);
+                    Toast.makeText(SavingsActivity.this, "Goals loaded", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SavingsActivity.this, "Failed to load goals", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error: " + response.code() + " - " + response.message());
+                }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String jsonResponse = response.body().string();
-                    Log.d(TAG, "JSON Response: " + jsonResponse);
-                    try {
-                        // Sử dụng GsonBuilder để bỏ qua các field không khớp
-                        Gson gson = new GsonBuilder().create();
-                        List<Goal> newGoals = gson.fromJson(jsonResponse, new TypeToken<List<Goal>>(){}.getType());
-                        runOnUiThread(() -> {
-                            goals.clear();
-                            goals.addAll(newGoals);
-                            goalAdapter.setGoals(goals);
-                            Toast.makeText(SavingsActivity.this, "Goals loaded", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "Goals fetched successfully");
-                        });
-                    } catch (Exception e) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(SavingsActivity.this, "Failed to parse goals: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "Parse error", e);
-                        });
-                    }
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(SavingsActivity.this, "Failed to load goals: " + response.message(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Error: " + response.code() + " - " + response.message());
-                    });
-                }
+            public void onFailure(Call<List<Goal>> call, Throwable t) {
+                Toast.makeText(SavingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "API call failed", t);
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 1) {
-            Goal newGoal = (Goal) data.getSerializableExtra("new_goal");
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK && requestCode == 1) {
+//            Goal newGoal = (Goal) data.getSerializableExtra("new_goal");
+////            if (newGoal != null) {
+////                goalAdapter.addGoal(newGoal);
+////            }
 //            if (newGoal != null) {
-//                goalAdapter.addGoal(newGoal);
+//                // Add the new goal to the list and refresh the adapter
+//                goals.add(newGoal);
+//                goalAdapter.setGoals(goals);
+//                fetchGoals(); // Refresh to ensure consistency with server
 //            }
-            if (newGoal != null) {
-                // Add the new goal to the list and refresh the adapter
-                goals.add(newGoal);
-                goalAdapter.setGoals(goals);
-                fetchGoals(); // Refresh to ensure consistency with server
-            }
-        }
+//        }
+//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchGoals(); // Refresh danh sách mỗi lần quay lại
     }
 }

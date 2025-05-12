@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Nút Back -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_left_arrow"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:padding="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!-- Nút Edit -->
     <ImageButton
         android:id="@+id/btnEdit"

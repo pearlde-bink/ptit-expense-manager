@@ -74,6 +74,27 @@ public class User_Profile extends AppCompatActivity {
         sharedPref = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         loadUserFromPrefs();
 
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(User_Profile.this, Entries.class); // hoặc tên Activity bạn muốn về
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // quay về không giữ lại màn hiện tại
+            startActivity(intent);
+            finish(); // đóng User_Profile
+        });
+
+        Button btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> {
+            // 1. Xoá token, user
+            sharedPref.edit().clear().apply();
+
+            // 2. Chuyển về màn hình đăng nhập
+            Intent intent = new Intent(User_Profile.this, AuthenLogin.class); // đổi LoginActivity nếu bạn dùng tên khác
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // xoá back stack
+            startActivity(intent);
+
+            Toast.makeText(User_Profile.this, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+        });
+
         // 1. Bắt sự kiện nút Edit
         btnEdit.setOnClickListener(v -> {
             if (currentUser == null) return;

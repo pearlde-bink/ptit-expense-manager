@@ -17,14 +17,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensemanager.adapter.GoalAdapter;
 import com.example.expensemanager.api.GoalService;
 import com.example.expensemanager.model.Goal;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class SavingsActivity extends BaseActivity {
     private static final String TAG = "SavingsActivity";
@@ -85,39 +91,49 @@ public class SavingsActivity extends BaseActivity {
     protected Class<?> getFabTargetActivity() {
         return AddGoal.class; // FAB leads to AddGoal
     }
-
-//    private void populateSampleGoals() {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(2024, Calendar.DECEMBER, 31);
-//        goals.add(new Goal("New Bike", 300, 600, "Monthly", calendar.getTime()));
-//        calendar.set(2025, Calendar.JUNE, 30);
-//        goals.add(new Goal("iPhone 15 Pro", 700, 1000, "One-Time", calendar.getTime()));
-//    }
-
     private void fetchGoals() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/goal")
                 .build();
-        GoalService goalService = retrofit.create(GoalService.class);
 
-        goalService.getGoals().enqueue(new Callback<List<Goal>>() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call<List<Goal>> call, Response<List<Goal>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    goals.clear();
-                    goals.addAll(response.body());
-                    goalAdapter.setGoals(goals);
-                } else {
-                    Toast.makeText(SavingsActivity.this, "Failed to load goals", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error: " + response.code() + " - " + response.message());
-                }
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(SavingsActivity.this, "Network error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "API call failed", e);
+                });
             }
 
             @Override
-            public void onFailure(Call<List<Goal>> call, Throwable t) {
-                Toast.makeText(SavingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Failure: " + t.getMessage(), t);
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String jsonResponse = response.body().string();
+                    Log.d(TAG, "JSON Response: " + jsonResponse);
+                    try {
+                        // Sử dụng GsonBuilder để bỏ qua các field không khớp
+                        Gson gson = new GsonBuilder().create();
+                        List<Goal> newGoals = gson.fromJson(jsonResponse, new TypeToken<List<Goal>>(){}.getType());
+                        runOnUiThread(() -> {
+                            goals.clear();
+                            goals.addAll(newGoals);
+                            goalAdapter.setGoals(goals);
+                            Toast.makeText(SavingsActivity.this, "Goals loaded", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Goals fetched successfully");
+                        });
+                    } catch (Exception e) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(SavingsActivity.this, "Failed to parse goals: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Parse error", e);
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SavingsActivity.this, "Failed to load goals: " + response.message(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error: " + response.code() + " - " + response.message());
+                    });
+                }
             }
         });
     }

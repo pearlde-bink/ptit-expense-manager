@@ -92,7 +92,7 @@ public class Overview extends BaseActivity {
         btnBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Overview.this, TotalExpenses.class);
+                Intent intent = new Intent(Overview.this, BudgetActivity.class);
                 startActivity(intent);
             }
         });

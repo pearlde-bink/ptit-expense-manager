@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for Add Budget screen -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:padding="32dp"
+    android:clipToPadding="false"
+    android:background="?attr/colorSurface">
+
+    <!-- Back Arrow -->
+    <ImageView
+        android:id="@+id/back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:text="Add Budget"
-        android:textSize="20sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp" />
+        android:textColor="?attr/colorOnBackground"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="@id/back_arrow"
+        app:layout_constraintStart_toEndOf="@id/back_arrow"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Amount Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/amount_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="AMOUNT"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        app:boxStrokeColor="#D3D3D3"
-        app:hintTextColor="#A3A3A3"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="32dp"
+        android:hint="Amount"
+        android:minHeight="56dp"
+        app:prefixText="$"
+        app:endIconDrawable="@drawable/ic_dollar"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -39,53 +60,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium" />
+            android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Month Spinner -->
-    <Spinner
-        android:id="@+id/month_spinner"
+    <!-- Month Dropdown -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/month_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
+        android:hint="Month"
+        android:minHeight="56dp"
+        app:endIconMode="dropdown_menu"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/amount_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Year Spinner -->
-    <Spinner
-        android:id="@+id/year_spinner"
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/month_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Year Dropdown -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/year_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/month_spinner"
+        android:hint="Year"
+        android:minHeight="56dp"
+        app:endIconMode="dropdown_menu"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/month_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Category Spinner -->
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/year_spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/year_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Add Budget Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add_budget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:minHeight="56dp"
         android:text="Add Budget"
+        android:textSize="16sp"
+        android:letterSpacing="0.05"
         android:textColor="@android:color/white"
-        app:backgroundTint="#007AFF"
         app:cornerRadius="12dp"
+        app:elevation="8dp"
         style="@style/Widget.Material3.Button.ElevatedButton"
-        app:layout_constraintTop_toBottomOf="@id/category_spinner"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

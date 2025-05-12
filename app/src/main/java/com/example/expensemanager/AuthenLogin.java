@@ -32,7 +32,7 @@ public class AuthenLogin extends AppCompatActivity {
     private EditText usernameInput, passwordInput;
     private Button loginButton;
 
-    private final String BASE_URL = "http://10.0.3.2:3000/"; // Dùng 10.0.2.2 hoặc 10.0.3.2 tùy emulator
+    private final String BASE_URL = "http://192.168.0.102:3000/"; // Dùng 10.0.2.2 hoặc 10.0.3.2 tùy emulator
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class AuthenLogin extends AppCompatActivity {
                         Toast.makeText(AuthenLogin.this, "Login success!", Toast.LENGTH_SHORT).show();
 
                         // Chuyển màn hình
-                        startActivity(new Intent(AuthenLogin.this, User_Profile.class));
+                        startActivity(new Intent(AuthenLogin.this, Overview.class));
                         finish();
                     } else {
                         Toast.makeText(AuthenLogin.this, "Login failed!", Toast.LENGTH_SHORT).show();

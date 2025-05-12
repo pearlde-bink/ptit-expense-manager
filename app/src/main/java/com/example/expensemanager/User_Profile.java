@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.UserService;
 import com.example.expensemanager.model.FileUtils;
@@ -53,6 +54,7 @@ public class User_Profile extends AppCompatActivity {
     private EditText etFullName, etPhone, etEmail;
     private Button btnSave;
     private ImageButton btnEdit;
+    private ImageView dialogAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class User_Profile extends AppCompatActivity {
 
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(User_Profile.this, Entries.class); // hoặc tên Activity bạn muốn về
+            Intent intent = new Intent(User_Profile.this, Overview.class); // hoặc tên Activity bạn muốn về
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // quay về không giữ lại màn hiện tại
             startActivity(intent);
             finish(); // đóng User_Profile
@@ -105,6 +107,7 @@ public class User_Profile extends AppCompatActivity {
             EditText dialogFullName = dialogView.findViewById(R.id.dialogFullName);
             EditText dialogPhone = dialogView.findViewById(R.id.dialogPhone);
             EditText dialogEmail = dialogView.findViewById(R.id.dialogEmail);
+            this.dialogAvatar = dialogAvatar;
 
             // Gán dữ liệu hiện tại
             dialogFullName.setText(currentUser.getFullName());
@@ -204,8 +207,10 @@ public class User_Profile extends AppCompatActivity {
                         tvPhone.setText(currentUser.getPhone());
                         tvEmail.setText(currentUser.getEmail());
 
-                        // Ẩn form
-                        editForm.setVisibility(View.GONE);
+                        Glide.with(User_Profile.this)
+                                .load(currentUser.getAvatar())
+                                .placeholder(R.drawable.ic_avatar)
+                                .into(dialogAvatar);
 
                         Toast.makeText(User_Profile.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -229,6 +234,14 @@ public class User_Profile extends AppCompatActivity {
             tvUsername.setText(currentUser.getUsername());
             tvPhone.setText(currentUser.getPhone());
             tvEmail.setText(currentUser.getEmail());
+
+            if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
+                ImageView avatarImageView = findViewById(R.id.avatarImageView);
+                Glide.with(this)
+                        .load(currentUser.getAvatar())
+                        .placeholder(R.drawable.ic_avatar)
+                        .into(avatarImageView);
+            }
         } else {
             Log.e("User_Profile", "Không có dữ liệu user trong SharedPreferences");
         }
@@ -268,6 +281,14 @@ public class User_Profile extends AppCompatActivity {
                     String imageUrl = response.body().getUrl();
                     currentUser.setAvatar(imageUrl); // cập nhật avatar cho currentUser
                     Toast.makeText(User_Profile.this, "Upload ảnh thành công!", Toast.LENGTH_SHORT).show();
+                    // Load ảnh mới vào avatar ngoài màn chính
+
+                    if (dialogAvatar != null) {
+                        Glide.with(User_Profile.this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.ic_avatar)
+                                .into(dialogAvatar);
+                    }
                 } else {
                     Toast.makeText(User_Profile.this, "Lỗi upload: " + response.code(), Toast.LENGTH_SHORT).show();
                 }

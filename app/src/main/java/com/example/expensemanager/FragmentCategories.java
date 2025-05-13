@@ -38,14 +38,5 @@ public class FragmentCategories extends Fragment {
 
     private void populateSampleExpenses() {
         Calendar calendar = Calendar.getInstance();
-
-        calendar.set(2024, Calendar.FEBRUARY, 20);
-        expenses.add(new Entry(calendar.getTime(), "Food", 20, "Food", 0.5, "Google Pay", false));
-
-        calendar.set(2024, Calendar.MARCH, 13);
-        expenses.add(new Entry(calendar.getTime(), "Uber", 18, "Uber", 0.83, "Cash", true));
-
-        calendar.set(2024, Calendar.MARCH, 11);
-        expenses.add(new Entry(calendar.getTime(), "Shopping", 400, "Shopping", 0.12, "Paytm", true));
     }
 }

@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensemanager.R;
+import com.example.expensemanager.model.Entry;
 import com.example.expensemanager.model.Entry;
 
 import java.text.SimpleDateFormat;
@@ -44,16 +46,15 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.EntryViewHol
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         holder.entryDate.setText(dateFormat.format(entry.getDate()));
 
-        // Set amount and VAT
-        String amountSign = entry.isExpense() ? "- $" : "+ $";
-        String amountText = amountSign + String.format(Locale.getDefault(), "%.0f", entry.getAmount()) +
-                " + Vat " + String.format(Locale.getDefault(), "%.2f%%", entry.getVatPercentage());
+        // Set amount and VAT (assuming the server sends a field for amount)
+        String amountSign = entry.getEntryType().equals("expense") ? "- $" : "+ $";
+        String amountText = amountSign + String.format(Locale.getDefault(), "%.0f", entry.getAmount());
         holder.entryAmount.setText(amountText);
 
-        // Set payment method
-        holder.paymentMethod.setText(entry.getPaymentMethod());
+        // Set payment method (we assume this data is also sent in the response)
+        holder.paymentMethod.setText("cash");
 
-        // Set category icon
+        // Set category icon based on the category name
         switch (entry.getCategory().toLowerCase()) {
             case "food":
                 holder.categoryIcon.setImageResource(R.drawable.food);

@@ -147,7 +147,7 @@ public class AddGoal extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_list;
+        return R.id.nav_goal;
     }
 
     @Override

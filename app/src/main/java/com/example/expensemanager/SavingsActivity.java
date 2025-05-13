@@ -27,8 +27,6 @@ import retrofit2.Response;
 
 public class SavingsActivity extends BaseActivity {
     private static final String TAG = "SavingsActivity";
-    private final String BASE_URL = "http://10.0.2.2:3000";
-
     private TextView currentSavingsText;
     private TextView monthlyGoalText;
     private RecyclerView goalsRecyclerView;
@@ -77,7 +75,7 @@ public class SavingsActivity extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_list;
+        return R.id.nav_goal;
     }
 
     @Override

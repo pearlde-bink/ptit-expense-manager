@@ -8,34 +8,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensemanager.R;
 import com.example.expensemanager.model.Category;
-import com.example.expensemanager.model.Income;
+import com.example.expensemanager.model.Expense;
 import java.util.List;
 
-public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeViewHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
-    private List<Income> incomeList;
-    private List<Category> categoryList; // Thêm danh sách category
+    private List<Expense> expenseList;
+    private List<Category> categoryList; // Danh sách category để ánh xạ categoryId
 
-    public IncomeAdapter(List<Income> incomeList, List<Category> categoryList) {
-        this.incomeList = incomeList;
+    public ExpenseAdapter(List<Expense> expenseList, List<Category> categoryList) {
+        this.expenseList = expenseList;
         this.categoryList = categoryList;
     }
 
     @NonNull
     @Override
-    public IncomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ExpenseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_income, parent, false);
-        return new IncomeViewHolder(view);
+        return new ExpenseViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull IncomeViewHolder holder, int position) {
-        Income income = incomeList.get(position);
-        holder.title.setText(income.getTitle());
-        holder.amount.setText(String.valueOf(income.getAmount()));
+    public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
+        Expense expense = expenseList.get(position);
+        holder.title.setText(expense.getTitle());
+        holder.amount.setText(String.valueOf(expense.getAmount()));
 
         // Tìm Category tương ứng với categoryId
-        String categoryId = String.valueOf(income.getCategoryId());
+        String categoryId = String.valueOf(expense.getCategoryId());
         Category category = categoryList.stream()
                 .filter(c -> c.getId() != null && c.getId().toString().equals(categoryId))
                 .findFirst()
@@ -49,17 +49,17 @@ public class IncomeAdapter extends RecyclerView.Adapter<IncomeAdapter.IncomeView
 
     @Override
     public int getItemCount() {
-        return incomeList != null ? incomeList.size() : 0;
+        return expenseList != null ? expenseList.size() : 0;
     }
 
-    public static class IncomeViewHolder extends RecyclerView.ViewHolder {
+    public static class ExpenseViewHolder extends RecyclerView.ViewHolder {
         TextView title, amount, category;
 
-        public IncomeViewHolder(@NonNull View itemView) {
+        public ExpenseViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.income_title);
             amount = itemView.findViewById(R.id.income_amount);
-            category = itemView.findViewById(R.id.income_category); // ID của TextView category
+            category = itemView.findViewById(R.id.income_category);
         }
     }
 }

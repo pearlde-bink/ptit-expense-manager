@@ -1,73 +1,27 @@
 package com.example.expensemanager.model;
 
-import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
-import java.util.Date;
 
 public class Income implements Serializable {
-    @SerializedName("id")
-    private int id;
-
-    @SerializedName("date")
-    private Date date;
-
-    @SerializedName("title")
+    private String date; // Đổi thành String để gửi chuỗi ISO 8601
     private String title;
-
-    @SerializedName("amount")
     private double amount;
+    private long categoryId; // Đổi thành long để gửi số
 
-    @SerializedName("category")
-    private String category;  // Đổi từ Category object thành String
-
-    // Constructor for creating a new income
-    public Income(Date date, String title, double amount, String category) {
+    public Income(String date, String title, double amount, long categoryId) {
         this.date = date;
         this.title = title;
         this.amount = amount;
-        this.category = category;
+        this.categoryId = categoryId;
     }
 
-    // Default constructor for Gson
-    public Income() {}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    // Getters và setters
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+    public long getCategoryId() { return categoryId; }
+    public void setCategoryId(long categoryId) { this.categoryId = categoryId; }
 }

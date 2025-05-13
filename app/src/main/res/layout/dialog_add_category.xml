@@ -88,8 +88,10 @@
             android:layout_height="wrap_content"
             android:text="Add"
             android:textColor="@android:color/white"
+
             app:backgroundTint="@color/Blue"
             style="@style/Widget.Material3.Button" />
+            app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

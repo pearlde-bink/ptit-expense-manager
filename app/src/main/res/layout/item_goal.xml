@@ -12,7 +12,7 @@
         android:id="@+id/goal_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_bike"
+        android:src="@drawable/ic_money_bag"
         android:contentDescription="Goal Icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,13 +22,13 @@
         android:id="@+id/goal_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:text="New Bike"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toEndOf="@id/goal_icon"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/goal_icon"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Progress Bar -->
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        app:indicatorColor="@color/Blue"
+        app:indicatorColor="#007AFF"
         app:trackColor="@android:color/darker_gray"
         app:trackThickness="8dp"
         android:progress="50"

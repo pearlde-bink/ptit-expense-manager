@@ -69,8 +69,7 @@ public class Overview extends BaseActivity {
             User user = gson.fromJson(userJson, User.class);
 
             // Lấy URL avatar
-            String avatarUrl = user.getAvatar();  // Giả sử User có phương thức getAvatarUrl()
-            System.out.println(avatarUrl);
+            String avatarUrl = user.getAvatar();
             // Dùng Glide để tải ảnh vào ImageView
             if (avatarUrl != null) {
                 Glide.with(this)

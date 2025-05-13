@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
         android:contentDescription="Add"
-        app:backgroundTint="@color/Blue"
+        app:backgroundTint="#007AFF"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

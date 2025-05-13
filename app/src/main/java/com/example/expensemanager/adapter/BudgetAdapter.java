@@ -8,25 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensemanager.R;
 import com.example.expensemanager.model.Budget;
-import com.example.expensemanager.model.Category;
+import java.text.DateFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> {
     private List<Budget> budgets;
-    private List<Category> categories;
 
-    public BudgetAdapter(List<Budget> budgets, List<Category> categories) {
+    public BudgetAdapter(List<Budget> budgets) {
         this.budgets = budgets;
-        this.categories = categories;
     }
 
     public void setBudgets(List<Budget> budgets) {
         this.budgets = budgets;
-        notifyDataSetChanged();
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
         notifyDataSetChanged();
     }
 
@@ -40,18 +34,11 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
         Budget budget = budgets.get(position);
-        holder.amount.setText("$" + String.format("%.2f", budget.getAmount()));
-        holder.period.setText(budget.getMonth() + "/" + budget.getYear());
-
-        // Map categoryId to category name
-//        String categoryName = "Unknown";
-//        for (Category category : categories) {
-//            if (category.getId() == budget.getCategoryId()) {
-//                categoryName = category.getTitle();
-//                break;
-//            }
-//        }
-//        holder.category.setText(categoryName);
+        // Format month and year (e.g., "May 2025")
+        String monthName = new DateFormatSymbols(Locale.getDefault()).getMonths()[budget.getMonth() - 1];
+        holder.budgetPeriod.setText(String.format("%s %d", monthName, budget.getYear()));
+        // Format amount for previous months (e.g., "$1000.00")
+        holder.budgetText.setText(String.format("$%.2f", budget.getAmount()));
     }
 
     @Override
@@ -60,15 +47,13 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
     static class BudgetViewHolder extends RecyclerView.ViewHolder {
-//        TextView category;
-        TextView amount;
-        TextView period;
+        TextView budgetPeriod;
+        TextView budgetText;
 
         BudgetViewHolder(@NonNull View itemView) {
             super(itemView);
-//            category = itemView.findViewById(R.id.budget_category);
-            amount = itemView.findViewById(R.id.budget_amount);
-            period = itemView.findViewById(R.id.budget_period);
+            budgetPeriod = itemView.findViewById(R.id.budget_period);
+            budgetText = itemView.findViewById(R.id.budget_text);
         }
     }
 }

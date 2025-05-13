@@ -122,6 +122,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddGoal" />
+        <activity android:name=".AddBudgetActivity" />
         <activity
             android:name=".ItemGoal"
             android:exported="false" />

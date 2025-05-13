@@ -63,7 +63,10 @@ public class AuthenLogin extends AppCompatActivity {
                         User user = loginResponse.getUser();
 
                         saveLoginData(accessToken, refreshToken, user);
-                        startActivity(new Intent(AuthenLogin.this, User_Profile.class));
+                      
+                        // Chuyển màn hình
+                        startActivity(new Intent(AuthenLogin.this, Overview.class));
+                      
                         finish();
                     } else {
                         Toast.makeText(AuthenLogin.this, "Login failed!", Toast.LENGTH_SHORT).show();

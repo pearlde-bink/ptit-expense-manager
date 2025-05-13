@@ -42,7 +42,7 @@ public class Add extends BaseActivity {
 
         // Initialize entries list
         entries = new ArrayList<>();
-        populateSampleEntries();
+        fetchEntriesFromServer();
 
         // Set up RecyclerView
         entryAdapter = new EntryAdapter(this, entries);

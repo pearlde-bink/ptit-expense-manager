@@ -3,7 +3,7 @@
     <!-- Selected Day -->
     <item android:state_selected="true">
         <shape android:shape="oval">
-            <solid android:color="@color/Blue" />
+            <solid android:color="#007AFF" />
             <size android:width="32dp" android:height="32dp" />
         </shape>
     </item>

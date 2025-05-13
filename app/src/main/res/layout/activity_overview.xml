@@ -63,7 +63,7 @@
                 android:id="@+id/total_salary_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TOTAL SALARY"
+                android:text="TOTAL INCOME"
                 android:textSize="12sp"
                 android:textColor="#A3A3A3"
                 android:fontFamily="sans-serif-medium"

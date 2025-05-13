@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/house_chimney"
+        android:icon="@drawable/ic_home"
         android:title="Home" />
     <item
-        android:id="@+id/nav_list"
-        android:icon="@drawable/piggy_bank"
-        android:title="Entries" />
+        android:id="@+id/nav_goal"
+        android:icon="@drawable/ic_goal"
+        android:title="Goal" />
     <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/bell"
@@ -22,6 +22,6 @@
         android:title="Reminders" />
     <item
         android:id="@+id/nav_budget"
-        android:icon="@drawable/apple"
+        android:icon="@drawable/ic_budget"
         android:title="Budget" />
 </menu>

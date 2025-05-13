@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensemanager.adapter.BudgetAdapter;
 import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.BudgetService;
-import com.example.expensemanager.api.ExpenseService;
 import com.example.expensemanager.model.Budget;
-import com.example.expensemanager.model.Expense;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -43,8 +41,8 @@ public class BudgetActivity extends BaseActivity {
     private TextView monthYearText;
     private BudgetAdapter budgetAdapter;
     private BudgetService budgetService;
-    private ExpenseService expenseService;
     private SharedPreferences sharedPref;
+    private List<Budget> budgets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +67,21 @@ public class BudgetActivity extends BaseActivity {
         // Set up RecyclerView
         setupRecyclerView();
 
+        // Set up Back Arrow
+        ImageView backArrow = findViewById(R.id.back_arrow);
+        backArrow.setOnClickListener(v -> finish());
+
         // Set up bottom navigation
         setupBottomNavigation();
 
-        // Fetch budget and expense data
+        // Fetch budget data
         fetchBudgetData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        fetchBudgetData(); // Refresh danh sách mỗi lần quay lại
+        fetchBudgetData(); // Refresh data each time activity resumes
     }
 
     @Override
@@ -101,18 +103,18 @@ public class BudgetActivity extends BaseActivity {
 
     private void setupRetrofit() {
         budgetService = ApiClient.getClient().create(BudgetService.class);
-        expenseService = ApiClient.getClient().create(ExpenseService.class);
     }
 
     private void setupRecyclerView() {
-        budgetAdapter = new BudgetAdapter(new ArrayList<>());
+        budgets = new ArrayList<>();
+        budgetAdapter = new BudgetAdapter(budgets);
         budgetsList.setLayoutManager(new LinearLayoutManager(this));
         budgetsList.setAdapter(budgetAdapter);
     }
 
     private void fetchBudgetData() {
         String accessToken = sharedPref.getString("accessToken", "");
-        Log.d(TAG, "Access Token: " + accessToken);
+//        Log.d(TAG, "Access Token: " + accessToken);
         if (accessToken.isEmpty()) {
             Toast.makeText(this, "Please login to view budgets", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, AuthenLogin.class));
@@ -133,95 +135,39 @@ public class BudgetActivity extends BaseActivity {
             public void onResponse(Call<List<Budget>> call, Response<List<Budget>> response) {
                 Log.d(TAG, "Budget Request URL: " + call.request().url());
                 Log.d(TAG, "Budget Response code: " + response.code());
-                if (!response.isSuccessful() || response.body() == null) {
+                if (response.isSuccessful() && response.body() != null) {
+                    budgets.clear();
+                    budgets.addAll(response.body());
+                    Toast.makeText(BudgetActivity.this, "Budgets loaded", Toast.LENGTH_SHORT).show();
+
+                    // Find current month's budget
+                    Budget currentBudget = budgets.stream()
+                            .filter(b -> b.getMonth() == currentMonth && b.getYear() == currentYear)
+                            .findFirst()
+                            .orElse(null);
+
+                    // Display current month's budget
+                    if (currentBudget != null) {
+                        currentBudgetText.setText(String.format("$%.2f", currentBudget.getAmount()));
+                        monthlyBudgetText.setText(String.format("$0 / $%.2f", currentBudget.getAmount()));
+                    } else {
+                        currentBudgetText.setText("$0.00");
+                        monthlyBudgetText.setText("$0 / $0");
+                    }
+
+                    // Get the 3 most recent budgets
+                    List<Budget> recentBudgets = budgets.stream()
+                            .sorted(Comparator.comparingInt(Budget::getYear)
+                                    .thenComparingInt(Budget::getMonth)
+                                    .reversed())
+                            .limit(3)
+                            .collect(Collectors.toList());
+
+                    // Update RecyclerView with recent budgets
+                    budgetAdapter.setBudgets(recentBudgets);
+                } else {
                     handleError(response.code());
-                    return;
                 }
-
-                List<Budget> budgets = response.body();
-                Budget currentBudget = budgets.stream()
-                        .filter(b -> b.getMonth() == currentMonth && b.getYear() == currentYear)
-                        .findFirst()
-                        .orElse(null);
-
-                // Fetch Expenses
-                expenseService.getExpenses("Bearer " + accessToken).enqueue(new Callback<List<Expense>>() {
-                    @Override
-                    public void onResponse(Call<List<Expense>> call, Response<List<Expense>> response) {
-                        Log.d(TAG, "Expense Request URL: " + call.request().url());
-                        Log.d(TAG, "Expense Response code: " + response.code());
-                        if (!response.isSuccessful() || response.body() == null) {
-                            handleError(response.code());
-                            return;
-                        }
-
-                        List<Expense> expenses = response.body();
-
-                        // Tính tổng expense cho tháng hiện tại
-                        double currentExpense = expenses.stream()
-                                .filter(e -> {
-                                    Calendar cal = Calendar.getInstance();
-                                    cal.setTime(e.getDate());
-                                    return cal.get(Calendar.MONTH) + 1 == currentMonth &&
-                                            cal.get(Calendar.YEAR) == currentYear;
-                                })
-                                .mapToDouble(Expense::getAmount)
-                                .sum();
-
-                        // Hiển thị ngân sách tháng hiện tại
-                        if (currentBudget != null) {
-                            currentBudgetText.setText(String.format("$%.2f", currentBudget.getAmount()));
-                            monthlyBudgetText.setText(String.format("$%.2f / $%.2f",
-                                    currentExpense, currentBudget.getAmount()));
-                        } else {
-                            currentBudgetText.setText("$0.00");
-                            monthlyBudgetText.setText(String.format("$%.2f / $0", currentExpense));
-                        }
-
-                        // Tổng hợp expense/budget cho các tháng trước
-                        Map<String, Double> expenseByMonth = expenses.stream()
-                                .collect(Collectors.groupingBy(
-                                        e -> {
-                                            Calendar cal = Calendar.getInstance();
-                                            cal.setTime(e.getDate());
-                                            int month = cal.get(Calendar.MONTH) + 1;
-                                            int year = cal.get(Calendar.YEAR);
-                                            return year + "-" + month;
-                                        },
-                                        Collectors.summingDouble(Expense::getAmount)
-                                ));
-
-                        List<Budget> previousBudgets = budgets.stream()
-                                .filter(b -> b.getYear() < currentYear ||
-                                        (b.getYear() == currentYear && b.getMonth() < currentMonth))
-                                .sorted(Comparator.comparingInt(Budget::getYear)
-                                        .thenComparingInt(Budget::getMonth)
-                                        .reversed())
-                                .collect(Collectors.toList());
-
-                        List<BudgetAdapter.BudgetDisplay> budgetDisplays = new ArrayList<>();
-                        for (Budget budget : previousBudgets) {
-                            String key = budget.getYear() + "-" + budget.getMonth();
-                            double expense = expenseByMonth.getOrDefault(key, 0.0);
-                            budgetDisplays.add(new BudgetAdapter.BudgetDisplay(
-                                    budget.getMonth(), budget.getYear(), expense, budget.getAmount()));
-                        }
-
-                        if (!budgetDisplays.isEmpty()) {
-                            budgetAdapter.setBudgets(budgetDisplays);
-                            Toast.makeText(BudgetActivity.this, "Budgets loaded", Toast.LENGTH_SHORT).show();
-                        } else {
-                            budgetAdapter.setBudgets(new ArrayList<>());
-                            Toast.makeText(BudgetActivity.this, "No previous budgets found", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Expense>> call, Throwable t) {
-                        Log.e(TAG, "Network error (Expense): " + t.getMessage());
-                        Toast.makeText(BudgetActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
@@ -234,11 +180,11 @@ public class BudgetActivity extends BaseActivity {
 
     private void handleError(int responseCode) {
         if (responseCode == 401) {
-            Toast.makeText(BudgetActivity.this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(BudgetActivity.this, AuthenLogin.class));
+            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, AuthenLogin.class));
             finish();
         } else {
-            Toast.makeText(BudgetActivity.this, "Failed to fetch data: " + responseCode, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to fetch data: " + responseCode, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Error: " + responseCode);
         }
     }

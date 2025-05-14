@@ -3,6 +3,11 @@ package com.example.expensemanager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +43,11 @@ public class StatisticsActivity extends BaseActivity {
     private TextView totalStatsText;
     private BarChart barChart;
     private TextView budgetListText;
-    private int currentMonth;
-    private int currentYear;
+    private Spinner monthSpinner;
+    private Spinner yearSpinner;
+    private Button applyButton;
+    private int selectedMonth = 5; // Mặc định là tháng 5 (tháng hiện tại)
+    private int selectedYear = 2025; // Mặc định là năm 2025
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +58,12 @@ public class StatisticsActivity extends BaseActivity {
         totalStatsText = findViewById(R.id.total_stats_text);
         barChart = findViewById(R.id.bar_chart);
         budgetListText = findViewById(R.id.budget_list_text);
-
-        // Lấy tháng và năm hiện tại (tháng 5/2025)
-        Calendar calendar = Calendar.getInstance();
-        currentMonth = calendar.get(Calendar.MONTH) + 1; // +1 vì Calendar.MONTH bắt đầu từ 0
-        currentYear = calendar.get(Calendar.YEAR);
+        monthSpinner = findViewById(R.id.month_spinner);
+        yearSpinner = findViewById(R.id.year_spinner);
+        applyButton = findViewById(R.id.apply_button);
 
         setupBarChart();
+        setupSpinners();
         loadStatistics();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -76,6 +83,47 @@ public class StatisticsActivity extends BaseActivity {
         barChart.setNoDataText("No chart data available");
     }
 
+    private void setupSpinners() {
+        // Cài đặt adapter cho monthSpinner
+        ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(this,
+                R.array.months, android.R.layout.simple_spinner_item);
+        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        monthSpinner.setAdapter(monthAdapter);
+        monthSpinner.setSelection(selectedMonth - 1); // Chọn tháng 5 mặc định
+        monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMonth = position + 1; // Lưu tháng đã chọn
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Không làm gì khi không chọn
+            }
+        });
+
+        // Cài đặt adapter cho yearSpinner
+        ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this,
+                R.array.years, android.R.layout.simple_spinner_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearSpinner.setAdapter(yearAdapter);
+        yearSpinner.setSelection(0); // Chọn năm 2025 mặc định
+        yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedYear = Integer.parseInt(parent.getItemAtPosition(position).toString()); // Lưu năm đã chọn
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Không làm gì khi không chọn
+            }
+        });
+
+        // Xử lý nút Apply
+        applyButton.setOnClickListener(v -> loadStatistics());
+    }
+
     private void loadStatistics() {
         // Lấy token từ SharedPreferences
         String token = getTokenFromSharedPreferences();
@@ -88,8 +136,8 @@ public class StatisticsActivity extends BaseActivity {
 
         Call<BudgetOverview> overviewCall = budgetService.getBudgetOverview(
                 "Bearer " + token,
-                currentMonth,
-                currentYear
+                selectedMonth,
+                selectedYear
         );
         overviewCall.enqueue(new Callback<BudgetOverview>() {
             @Override

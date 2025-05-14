@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minWidth="300dp"
     android:padding="16dp">
 
     <TextView
@@ -21,6 +22,7 @@
         android:id="@+id/category_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minWidth="250dp"
         android:layout_marginTop="16dp"
         android:hint="Category Name"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -43,6 +45,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/icon_dropdown_layout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:minWidth="250dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -68,15 +71,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        android:gravity="end"
         app:layout_constraintTop_toBottomOf="@id/icon_dropdown_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="Cancel"
             android:textColor="@color/Gray"
@@ -84,14 +87,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Add"
             android:textColor="@android:color/white"
-
             app:backgroundTint="@color/Blue"
             style="@style/Widget.Material3.Button" />
-            app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

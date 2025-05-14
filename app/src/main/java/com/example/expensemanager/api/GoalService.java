@@ -2,6 +2,8 @@ package com.example.expensemanager.api;
 
 import com.example.expensemanager.model.AddToGoalRequest;
 import com.example.expensemanager.model.Goal;
+import com.example.expensemanager.model.api.GoalOverviewResponse;
+
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,7 +20,7 @@ public interface GoalService {
     Call<List<Goal>> getGoals(@Header("Authorization") String token);
 
     @GET("goal/overview")
-    Call<List<Goal>> getGoalsOverview(@Header("Authorization") String token);
+    Call<GoalOverviewResponse> getGoalsOverview(@Header("Authorization") String token);
 
     @POST("goal/add-to-goal")
     Call<Goal> createGoal(@Body AddToGoalRequest goal, @Header("Authorization") String token);

@@ -1,10 +1,23 @@
 package com.example.expensemanager.model;
 
-public class Budget {
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+public class Budget implements Serializable {
+    @SerializedName("id")
     private int id;
+
+    @SerializedName("userId")
     private int userId;
+
+    @SerializedName("amount")
     private double amount;
-    private int month; // 1-12
+
+    @SerializedName("month")
+    private int month;
+
+    @SerializedName("year")
     private int year;
 
     public Budget(int id, int userId,  double amount, int month, int year) {

@@ -1,6 +1,7 @@
 package com.example.expensemanager.api;
 
 import com.example.expensemanager.model.Budget;
+import com.example.expensemanager.model.BudgetOverview;
 import com.example.expensemanager.model.BudgetRequest;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface BudgetService {
     @POST("budgets")
@@ -29,4 +31,11 @@ public interface BudgetService {
 
     @DELETE("budgets/{id}")
     Call<Void> deleteBudget(@Header("Authorization") String authHeader, @Path("id") int id);
+
+    @GET("budgets/overview")
+    Call<BudgetOverview> getBudgetOverview(
+            @Header("Authorization") String authHeader,
+            @Query("month") Integer month,
+            @Query("year") Integer year
+    );
 }

@@ -24,4 +24,5 @@
         android:id="@+id/nav_user"
         android:icon="@drawable/ic_avatar"
         android:title="User" />
+
 </menu>

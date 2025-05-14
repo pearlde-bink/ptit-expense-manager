@@ -51,8 +51,8 @@ public class BottomNavigation extends AppCompatActivity {
                 targetActivity = Overview.class;
             } else if (itemId == R.id.nav_goal) {
                 targetActivity = AddGoal.class;
-            } else if (itemId == R.id.nav_statistic) {
-                targetActivity = NotificationActivity.class;
+            } else if (itemId == R.id.nav_statistics) {
+             targetActivity = StatisticsActivity.class;
             } else if (itemId == R.id.nav_user) {
              targetActivity = User_Profile.class;
             } else if (itemId == R.id.nav_budget) {

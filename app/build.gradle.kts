@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // Compose (nếu có dùng)
+    // Compose
     implementation("androidx.compose.material3:material3:1.3.1")
 
     // Retrofit + Gson
@@ -50,6 +50,10 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
+
+    //    chart
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    
     implementation ("com.google.android.material:material:1.9.0")
 
     // Test

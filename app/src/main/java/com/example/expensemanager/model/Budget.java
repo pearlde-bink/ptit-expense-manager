@@ -7,7 +7,7 @@ public class Budget {
     private int month; // 1-12
     private int year;
 
-    public Budget(int id, int userId,  double amount, int month, int year) {
+    public Budget(double amount, int month, int year) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
@@ -37,5 +37,21 @@ public class Budget {
 
     public int getYear() {
         return year;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }

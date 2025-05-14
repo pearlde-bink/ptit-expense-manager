@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.expensemanager.BudgetActivity;
 import com.example.expensemanager.R;
 import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.BudgetService;
@@ -24,7 +23,6 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,31 +32,17 @@ import retrofit2.Response;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> {
     private List<Budget> budgets;
-    private List<BudgetActivity.BudgetWithExpense> budgetsWithExpenses;
     private Context context;
     private BudgetService budgetService;
 
     public BudgetAdapter(List<Budget> budgets, Context context) {
         this.budgets = budgets;
-        this.budgetsWithExpenses = new ArrayList<>();
         this.context = context;
-        this.budgetService = ApiClient.getClient().create(BudgetService.class);
-    }
-
-    public BudgetAdapter(List<Budget> budgets) {
-        this.budgets = budgets;
-        this.budgetsWithExpenses = new ArrayList<>();
         this.budgetService = ApiClient.getClient().create(BudgetService.class);
     }
 
     public void setBudgets(List<Budget> budgets) {
         this.budgets = budgets;
-        this.budgetsWithExpenses.clear();
-        notifyDataSetChanged();
-    }
-
-    public void setBudgetsWithExpenses(List<BudgetActivity.BudgetWithExpense> budgetsWithExpenses) {
-        this.budgetsWithExpenses = budgetsWithExpenses;
         notifyDataSetChanged();
     }
 
@@ -71,24 +55,18 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
-        Budget budget;
-        if (!budgetsWithExpenses.isEmpty()) {
-            BudgetActivity.BudgetWithExpense budgetWithExpense = budgetsWithExpenses.get(position);
-            budget = budgetWithExpense.getBudget();
-            double totalExpense = budgetWithExpense.getTotalExpense();
-            double budgetAmount = budget.getAmount();
-            holder.budgetText.setText(String.format("$%.2f / $%.2f", totalExpense, budgetAmount));
-        } else {
-            budget = budgets.get(position);
-            holder.budgetText.setText(String.format("$0.00 / $%.2f", budget.getAmount()));
-        }
+        Budget budget = budgets.get(position);
 
+        // Format month and year
         String monthName = new DateFormatSymbols(Locale.getDefault()).getMonths()[budget.getMonth() - 1];
         holder.budgetPeriod.setText(String.format("%s %d", monthName, budget.getYear()));
 
+        // Set budget amount
+        holder.budgetText.setText(String.format("$%.2f", budget.getAmount()));
+
         // Setup menu button
         holder.menuButton.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(v.getContext(), holder.menuButton);
+            PopupMenu popup = new PopupMenu(context, holder.menuButton);
             popup.inflate(R.menu.budget_menu);
 
             popup.setOnMenuItemClickListener(item -> {
@@ -109,10 +87,12 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     @Override
     public int getItemCount() {
-        return budgetsWithExpenses.isEmpty() ? (budgets != null ? budgets.size() : 0) : budgetsWithExpenses.size();
+        return budgets != null ? budgets.size() : 0;
     }
 
     private void showEditBudgetDialog(Budget budget, int position) {
+        if (context == null) return;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_budget, null);
         builder.setView(dialogView);
@@ -174,7 +154,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
             // Call API to update budget
             String accessToken = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
                     .getString("accessToken", "");
-            
+
             budgetService.updateBudget("Bearer " + accessToken, budget.getId(), budget)
                     .enqueue(new Callback<Budget>() {
                         @Override
@@ -183,8 +163,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                                 Toast.makeText(context, "Budget updated successfully", Toast.LENGTH_SHORT).show();
                                 notifyItemChanged(position);
                             } else {
-                                Toast.makeText(context, "Failed to update budget: " + response.code(), 
-                                    Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Failed to update budget: " + response.code(),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -201,13 +181,15 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
     private void showDeleteConfirmationDialog(Budget budget) {
+        if (context == null) return;
+
         new AlertDialog.Builder(context)
                 .setTitle("Delete Budget")
                 .setMessage("Are you sure you want to delete this budget?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     String accessToken = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
                             .getString("accessToken", "");
-                    
+
                     budgetService.deleteBudget("Bearer " + accessToken, budget.getId())
                             .enqueue(new Callback<Void>() {
                                 @Override
@@ -218,18 +200,18 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                                             budgets.remove(position);
                                             notifyItemRemoved(position);
                                         }
-                                        Toast.makeText(context, "Budget deleted successfully", 
-                                            Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Budget deleted successfully",
+                                                Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(context, "Failed to delete budget: " + response.code(), 
-                                            Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Failed to delete budget: " + response.code(),
+                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<Void> call, Throwable t) {
-                                    Toast.makeText(context, "Error: " + t.getMessage(), 
-                                        Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Error: " + t.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             });
                 })
@@ -238,6 +220,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
     private int getMonthIndex(String monthName) {
+        if (context == null) return -1;
         String[] months = context.getResources().getStringArray(R.array.months);
         for (int i = 0; i < months.length; i++) {
             if (months[i].equalsIgnoreCase(monthName)) {

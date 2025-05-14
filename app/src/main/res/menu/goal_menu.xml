@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_add_money"
+        android:title="Add money"
+        android:icon="@drawable/ic_add_square" />
+    <item
+        android:id="@+id/menu_edit_goal"
+        android:title="Edit"
+        android:icon="@drawable/ic_edit" />
+    <item
+        android:id="@+id/menu_delete_goal"
+        android:title="Delete"
+        android:icon="@drawable/ic_delete" />
+</menu>

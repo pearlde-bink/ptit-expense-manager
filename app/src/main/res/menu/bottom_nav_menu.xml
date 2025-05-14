@@ -7,21 +7,21 @@
         android:icon="@drawable/ic_home"
         android:title="Home" />
     <item
+        android:id="@+id/nav_budget"
+        android:icon="@drawable/ic_budget"
+        android:title="Budget" />
+    <item
         android:id="@+id/nav_goal"
         android:icon="@drawable/ic_goal"
         android:title="Goal" />
     <item
-        android:id="@+id/nav_notifications"
-        android:icon="@drawable/bell"
-        android:title="Notifications"
+        android:id="@+id/nav_statistic"
+        android:icon="@drawable/ic_analysis"
+        android:title="Statistic"
         app:showAsAction="always"
         app:actionLayout="@layout/notification_badge" />
     <item
-        android:id="@+id/nav_settings"
-        android:icon="@drawable/settings"
-        android:title="Reminders" />
-    <item
-        android:id="@+id/nav_budget"
-        android:icon="@drawable/ic_budget"
-        android:title="Budget" />
+        android:id="@+id/nav_user"
+        android:icon="@drawable/ic_avatar"
+        android:title="User" />
 </menu>

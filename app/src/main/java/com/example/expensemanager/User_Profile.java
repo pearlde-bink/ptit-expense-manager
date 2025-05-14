@@ -40,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class User_Profile extends AppCompatActivity {
+public class User_Profile extends BaseActivity {
 
     private User currentUser;
     private SharedPreferences sharedPref;
@@ -55,6 +55,16 @@ public class User_Profile extends AppCompatActivity {
     private Button btnSave;
     private ImageButton btnEdit;
     private ImageView dialogAvatar;
+
+    @Override
+    protected int getSelectedNavItemId() {
+        return R.id.nav_user;
+    }
+
+    @Override
+    protected Class<?> getFabTargetActivity() {
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

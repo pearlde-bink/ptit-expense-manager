@@ -46,7 +46,7 @@ public class NotificationActivity extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_notifications; // Highlight the "Entries" item (as a placeholder, adjust as needed)
+        return R.id.nav_statistic; // Highlight the "Entries" item (as a placeholder, adjust as needed)
     }
 
     @Override

@@ -206,4 +206,10 @@ public class Overview extends BaseActivity {
     protected Class<?> getFabTargetActivity() {
         return Add.class; // FAB leads to AddActivity (for adding income/expense)
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchOverviewData();
+    }
 }

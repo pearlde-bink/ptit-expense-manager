@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,12 @@ public class AuthenLogin extends AppCompatActivity {
         usernameInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.btn_login);
+        TextView registerText = findViewById(R.id.register_link);
+
+        registerText.setOnClickListener(v -> {
+            Intent intent = new Intent(AuthenLogin.this, Register_Activity.class);
+            startActivity(intent);
+        });
 
         AuthService authService = ApiClient.getClient().create(AuthService.class);
 

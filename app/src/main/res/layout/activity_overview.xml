@@ -30,7 +30,6 @@
         android:contentDescription="Profile"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        app:tint="#A3A3A3"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

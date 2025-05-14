@@ -24,11 +24,11 @@ public class Expense implements Serializable {
     @SerializedName("userId")
     private int userId;
 
-    public Expense(Date date, String title, double amount, String category) {
-
     private long categoryId; // Đổi thành long để gửi số
 
-    public Expense(String date, String title, double amount, long categoryId) {
+    public Expense(Date date, String title, double amount, String category) {}
+
+    public Expense(Date date, String title, double amount, long categoryId) {
         this.date = date;
         this.title = title;
         this.amount = amount;
@@ -66,5 +66,13 @@ public class Expense implements Serializable {
 
     public String getCategory() {
         return category;
+    }
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
     }
 }

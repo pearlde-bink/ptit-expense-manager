@@ -29,10 +29,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import retrofit2.Call;
@@ -170,6 +172,16 @@ public class AddExpense extends AppCompatActivity {
             SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String formattedDate = isoFormat.format(selectedDate.getTime());
 
+            SimpleDateFormat isoFormat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            isoFormat.setLenient(false); // tùy chọn: để đảm bảo định dạng nghiêm ngặt
+            Date dateconstructor = null;
+            try {
+                dateconstructor = isoFormat2.parse(formattedDate);
+                // date giờ là kiểu java.util.Date
+            } catch (ParseException e) {
+                e.printStackTrace(); // xử lý lỗi định dạng sai
+            }
+
             // Chuyển categoryId thành số
             long categoryId;
             try {
@@ -180,7 +192,7 @@ public class AddExpense extends AppCompatActivity {
             }
 
             // Tạo đối tượng Expense mới
-            Expense newExpense = new Expense(formattedDate, expenseTitle, amount, categoryId);
+            Expense newExpense = new Expense(dateconstructor, expenseTitle, amount, categoryId);
 
             // Log JSON để kiểm tra
             Gson gson = new Gson();

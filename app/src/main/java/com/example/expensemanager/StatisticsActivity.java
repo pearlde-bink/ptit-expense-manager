@@ -140,7 +140,7 @@ public class StatisticsActivity extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_statistics;
+        return R.id.nav_statistic;
     }
 
     @Override

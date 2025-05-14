@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,10 +20,12 @@ import com.example.expensemanager.model.Entry;
 import com.example.expensemanager.model.OverviewResponse;
 import com.example.expensemanager.model.User;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +39,9 @@ public class Overview extends BaseActivity {
     private TextView monthlySavingsValue;
     private RecyclerView entriesRecyclerView;
     private EntryAdapter entryAdapter;
-    private List<Entry> entries;
+    private List<Entry> entries; // Danh sách hiển thị (đã lọc)
+    private List<Entry> allEntries; // Danh sách gốc từ server
+    private TabLayout entriesTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +56,19 @@ public class Overview extends BaseActivity {
         MaterialButton btnSavings = findViewById(R.id.btn_savings);
         MaterialButton btnBudget = findViewById(R.id.btn_budget);
         entriesRecyclerView = findViewById(R.id.entries_recycler_view);
+        entriesTabLayout = findViewById(R.id.entries_tab_layout);
 
         // Initialize entries list
         entries = new ArrayList<>();
+        allEntries = new ArrayList<>();
 
         // Set up RecyclerView
         entryAdapter = new EntryAdapter(this, entries);
         entriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         entriesRecyclerView.setAdapter(entryAdapter);
+
+        // Set up TabLayout
+        setupTabLayout();
 
         SharedPreferences sharedPref = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String userJson = sharedPref.getString("user", null);
@@ -73,16 +83,15 @@ public class Overview extends BaseActivity {
             // Dùng Glide để tải ảnh vào ImageView
             if (avatarUrl != null) {
                 Glide.with(this)
-                        .load(avatarUrl)  // URL của ảnh từ Cloudinary
-                        .placeholder(R.drawable.ic_avatar)  // Hình ảnh thay thế khi chưa tải xong
-                        .error(R.drawable.ic_avatar)  // Hình ảnh hiển thị nếu có lỗi
-                        .into(profileIcon);  // ImageView nơi hiển thị ảnh
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.ic_profile2)
+                        .error(R.drawable.ic_profile2)
+                        .into(profileIcon);
             }
         }
 
         // Profile Icon
         profileIcon.setOnClickListener(v -> {
-            // Tạo một Intent để chuyển tới User_Profile Activity
             Intent intent = new Intent(Overview.this, User_Profile.class);
             startActivity(intent);
         });
@@ -105,12 +114,55 @@ public class Overview extends BaseActivity {
         setupBottomNavigation();
     }
 
+    private void setupTabLayout() {
+        // Mặc định chọn tab "All"
+        entriesTabLayout.getTabAt(0).select();
+
+        // Lắng nghe sự kiện chọn tab
+        entriesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                filterEntries(tab.getPosition());
+                Log.d("TabSelected", "Selected tab position: " + tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Không cần xử lý
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                filterEntries(tab.getPosition());
+            }
+        });
+    }
+
+    private void filterEntries(int tabPosition) {
+        entries.clear();
+        switch (tabPosition) {
+            case 0: // All
+                entries.addAll(allEntries);
+                break;
+            case 1: // Incomes
+                entries.addAll(allEntries.stream()
+                        .filter(entry -> "income".equalsIgnoreCase(entry.getEntryType()))
+                        .collect(Collectors.toList()));
+                break;
+            case 2: // Expenses
+                entries.addAll(allEntries.stream()
+                        .filter(entry -> "expense".equalsIgnoreCase(entry.getEntryType()))
+                        .collect(Collectors.toList()));
+                break;
+        }
+        entryAdapter.notifyDataSetChanged();
+        Log.d("Filter", "Filtered entries count: " + entries.size() + " for tab: " + tabPosition);
+    }
+
     private void fetchOverviewData() {
-        // Assuming you're using Retrofit to get the data
         OverviewService service = ApiClient.getClient().create(OverviewService.class);
         String accessToken = "Bearer " + getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("accessToken", "");
 
-        // Call the API
         Call<OverviewResponse> call = service.getOverviewData(accessToken);
         call.enqueue(new Callback<OverviewResponse>() {
             @Override
@@ -123,24 +175,24 @@ public class Overview extends BaseActivity {
                         totalExpenseValue.setText("$" + overviewResponse.getTotalExpense());
                         monthlySavingsValue.setText("$" + overviewResponse.getCurrentAmount());
 
-                        // Dùng luôn dữ liệu từ server, không convert
-                        // Xử lý entries cẩn thận tránh null
+                        // Lưu danh sách gốc và hiển thị mặc định (All)
                         List<Entry> serverEntries = overviewResponse.getEntries();
+                        allEntries.clear();
                         entries.clear();
                         if (serverEntries != null) {
-                            entries.addAll(serverEntries);
+                            allEntries.addAll(serverEntries);
+                            entries.addAll(allEntries); // Mặc định hiển thị tất cả
                         }
                         entryAdapter.notifyDataSetChanged();
                     }
                 } else {
-                    Toast.makeText(Overview.this, "Error fetching data" + response.code() + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Overview.this, "Error fetching data: " + response.code() + " " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-
             public void onFailure(Call<OverviewResponse> call, Throwable t) {
-                Toast.makeText(Overview.this, "Network error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Overview.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

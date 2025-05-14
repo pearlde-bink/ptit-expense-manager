@@ -1,30 +1,44 @@
 package com.example.expensemanager.model;
 
-//import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-public class Category {
-    private Long id;
+public class Category implements Serializable {
+    @SerializedName("id")
+    private int id;
 
+    private int userId;
+
+    @SerializedName("title")
     private String title;
 
-    private String type;
+    @SerializedName("type")
+    private String type; // "INCOME" hoặc "EXPENSE"
 
+    @SerializedName("icon")
     private String icon;
 
-    private LocalDateTime createdAt;
+    @SerializedName("created_at")
+    private String createdAt; // hoặc Date nếu muốn parse ra Date
 
-//    protected void onCreate() {
-//        this.createdAt = LocalDateTime.now();
-//    }
+    public Category(int id, int userId, String title, String type, String icon) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.type = type;
+        this.icon = icon;
+    }
 
-    // Getters and setters
+    public Category(Integer id) {
+        this.id = id;
+    }
 
-    public Long getId() {
+    // Getters & Setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -52,7 +66,28 @@ public class Category {
         this.icon = icon;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return title;
     }
 }

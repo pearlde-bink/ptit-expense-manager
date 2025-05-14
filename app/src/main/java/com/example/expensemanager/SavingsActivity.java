@@ -17,6 +17,7 @@ import com.example.expensemanager.adapter.GoalAdapter;
 import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.GoalService;
 import com.example.expensemanager.model.Goal;
+import com.example.expensemanager.model.api.GoalOverviewResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SavingsActivity extends BaseActivity {
+public class SavingsActivity extends BaseActivity implements GoalAdapter.GoalUpdateListener{
     private static final String TAG = "SavingsActivity";
     private TextView currentSavingsText;
-    private TextView monthlyGoalText;
+    private TextView overviewGoalText;
     private RecyclerView goalsRecyclerView;
     private GoalAdapter goalAdapter;
     private List<Goal> goals;
@@ -42,7 +43,7 @@ public class SavingsActivity extends BaseActivity {
         // Initialize views
         ImageView backArrow = findViewById(R.id.back_arrow);
         currentSavingsText = findViewById(R.id.current_savings);
-        monthlyGoalText = findViewById(R.id.monthly_goal_text);
+        overviewGoalText = findViewById(R.id.overview_goal_text);
         goalsRecyclerView = findViewById(R.id.goals_list);
 
         // Set up Back Arrow
@@ -52,16 +53,13 @@ public class SavingsActivity extends BaseActivity {
         goals = new ArrayList<>();
 //        populateSampleGoals();
         // Set up RecyclerView
-        goalAdapter = new GoalAdapter(goals);
+        goalAdapter = new GoalAdapter(this, goals, this);
         goalsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         goalsRecyclerView.setAdapter(goalAdapter);
 
-        // Update savings summary (placeholder)
-        currentSavingsText.setText("$800");
-        monthlyGoalText.setText("$200 / $500");
-
         // Fetch goals from API
         fetchGoals();
+        fetchOverview();
 
         // Set up bottom navigation
         setupBottomNavigation();
@@ -93,7 +91,6 @@ public class SavingsActivity extends BaseActivity {
                     goals.clear();
                     goals.addAll(response.body());
                     goalAdapter.setGoals(goals);
-                    Toast.makeText(SavingsActivity.this, "Goals loaded", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(SavingsActivity.this, "Failed to load goals", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error: " + response.code() + " - " + response.message());
@@ -108,25 +105,52 @@ public class SavingsActivity extends BaseActivity {
         });
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK && requestCode == 1) {
-//            Goal newGoal = (Goal) data.getSerializableExtra("new_goal");
-////            if (newGoal != null) {
-////                goalAdapter.addGoal(newGoal);
-////            }
-//            if (newGoal != null) {
-//                // Add the new goal to the list and refresh the adapter
-//                goals.add(newGoal);
-//                goalAdapter.setGoals(goals);
-//                fetchGoals(); // Refresh to ensure consistency with server
-//            }
-//        }
-//    }
     @Override
     protected void onResume() {
         super.onResume();
         fetchGoals(); // Refresh danh sách mỗi lần quay lại
+        fetchOverview();
     }
+
+    private void fetchOverview() {
+        String token = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("accessToken", "");
+        GoalService goalService = ApiClient.getClient().create(GoalService.class);
+
+        goalService.getGoalsOverview("Bearer " + token).enqueue(new Callback<GoalOverviewResponse>() {
+            @Override
+            public void onResponse(Call<GoalOverviewResponse> call, Response<GoalOverviewResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GoalOverviewResponse overview = response.body();
+                    // Update UI with the fetched data
+                    String totalCurrentAmount = "$" + overview.getTotalCurrentAmount();
+                    String overviewGoal = "$" + overview.getTotalCurrentAmount() + " / $" + overview.getTotalGoals();
+                    currentSavingsText.setText(totalCurrentAmount);
+                    overviewGoalText.setText(overviewGoal);
+                } else {
+                    Toast.makeText(SavingsActivity.this, "Failed to load overview", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error: " + response.code() + " - " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GoalOverviewResponse> call, Throwable t) {
+                Toast.makeText(SavingsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "API call failed", t);
+            }
+        });
+    }
+
+    @Override
+    public void onGoalUpdated() {
+        fetchOverview();
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == ADD_MONEY_REQUEST_CODE && resultCode == RESULT_OK) {
+//            fetchGoals(); // Cập nhật danh sách goals
+//            fetchOverview(); // Cập nhật tổng tiền đã tiết kiệm
+//        }
+//    }
 }

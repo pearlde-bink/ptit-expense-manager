@@ -44,9 +44,22 @@ import retrofit2.Response;
 
 public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder> {
     private List<Goal> goals;
+    private Context context;
+
+    private GoalUpdateListener listener; // Đối tượng callback để gọi khi cập nhật
+
+    public interface GoalUpdateListener {
+        void onGoalUpdated();
+    }
 
     public GoalAdapter(List<Goal> goals) {
         this.goals = goals;
+    }
+
+    public GoalAdapter(Context context, List<Goal> goals, GoalUpdateListener listener) {
+        this.context = context;
+        this.goals = goals;
+        this.listener = listener; // Nhận listener từ Activity
     }
 
     public void setGoals(List<Goal> goals) {
@@ -151,9 +164,9 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         inputAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int added = 0;
+                double added = 0;
                 try {
-                    added = Integer.parseInt(s.toString());
+                    added = Double.parseDouble(s.toString());
                 } catch (NumberFormatException e) {
                     // ignore
                 }
@@ -196,6 +209,9 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
 
                             // Thông báo adapter cập nhật item
                             notifyItemChanged(position);
+                            if (listener != null) {
+                                listener.onGoalUpdated();
+                            }
 
                             Toast.makeText(context, "Added $" + addedMoney + " to goal " + updatedGoal.getTitle(), Toast.LENGTH_SHORT).show();
                         } else {

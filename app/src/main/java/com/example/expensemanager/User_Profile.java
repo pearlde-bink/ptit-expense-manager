@@ -173,6 +173,12 @@ public class User_Profile extends BaseActivity {
                                             tvFullName.setText(currentUser.getFullName());
                                             tvPhone.setText(currentUser.getPhone());
                                             tvEmail.setText(currentUser.getEmail());
+                                            ImageView avatarImageView = findViewById(R.id.avatarImageView);
+
+                                            Glide.with(User_Profile.this)
+                                                    .load(currentUser.getAvatar())
+                                                    .placeholder(R.drawable.ic_avatar)
+                                                    .into(avatarImageView);
                                             Toast.makeText(User_Profile.this, "Update successfully!", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(User_Profile.this, "Error: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -226,11 +232,12 @@ public class User_Profile extends BaseActivity {
                         tvFullName.setText(currentUser.getFullName());
                         tvPhone.setText(currentUser.getPhone());
                         tvEmail.setText(currentUser.getEmail());
+                        ImageView avatarImageView = findViewById(R.id.avatarImageView);
 
                         Glide.with(User_Profile.this)
                                 .load(currentUser.getAvatar())
                                 .placeholder(R.drawable.ic_avatar)
-                                .into(dialogAvatar);
+                                .into(avatarImageView);
 
                         Toast.makeText(User_Profile.this, "Update successfully!", Toast.LENGTH_SHORT).show();
                     } else {

@@ -45,6 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         // Handle navigation item clicks
+        // Handle navigation item clicks
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Class<?> targetActivity = null;
@@ -57,16 +58,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                 targetActivity = NotificationActivity.class;
             } else if (itemId == R.id.nav_user) {
                 targetActivity = User_Profile.class;
-            }else if (itemId == R.id.nav_budget) {
+            } else if (itemId == R.id.nav_budget) {
                 targetActivity = BudgetActivity.class;
             }
 
             // If we're already on the target activity, do nothing
             if (targetActivity != null && !this.getClass().equals(targetActivity)) {
                 Intent intent = new Intent(this, targetActivity);
-                // Clear the back stack to prevent stacking activities
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                // Thay vì clear toàn bộ stack, chỉ clear các activity phía trên
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                // Thêm animation fade đơn giản
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                 return true;
             }
             return false;

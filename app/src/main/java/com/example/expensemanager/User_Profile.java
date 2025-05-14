@@ -124,6 +124,16 @@ public class User_Profile extends BaseActivity {
             dialogPhone.setText(currentUser.getPhone());
             dialogEmail.setText(currentUser.getEmail());
 
+
+            if (!currentUser.getAvatar().isEmpty()) {
+                Glide.with(this) // nếu bạn đang trong Activity, dùng `this` cũng được
+                        .load(currentUser.getAvatar()) // URL hoặc file path
+                        .placeholder(R.drawable.ic_avatar) // ảnh tạm trong lúc chờ load
+                        .error(R.drawable.ic_avatar) // ảnh nếu lỗi load
+                        .into(dialogAvatar);
+
+            }
+
             // Mở chọn ảnh khi click avatar
             dialogAvatar.setOnClickListener(view -> {
                 // mở gallery
@@ -133,9 +143,9 @@ public class User_Profile extends BaseActivity {
             });
 
             AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("Chỉnh sửa thông tin")
+                    .setTitle("Edit profile")
                     .setView(dialogView)
-                    .setPositiveButton("Lưu", (d, which) -> {
+                    .setPositiveButton("Save", (d, which) -> {
                         // Gọi API cập nhật user
                         String newName = dialogFullName.getText().toString();
                         String newPhone = dialogPhone.getText().toString();
@@ -163,19 +173,19 @@ public class User_Profile extends BaseActivity {
                                             tvFullName.setText(currentUser.getFullName());
                                             tvPhone.setText(currentUser.getPhone());
                                             tvEmail.setText(currentUser.getEmail());
-                                            Toast.makeText(User_Profile.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(User_Profile.this, "Update successfully!", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Toast.makeText(User_Profile.this, "Lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(User_Profile.this, "Error: " + response.code(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<User> call, Throwable t) {
-                                        Toast.makeText(User_Profile.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(User_Profile.this, "Netword Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     })
-                    .setNegativeButton("Huỷ", null)
+                    .setNegativeButton("Cancel", null)
                     .create();
 
             dialog.show();
@@ -222,15 +232,15 @@ public class User_Profile extends BaseActivity {
                                 .placeholder(R.drawable.ic_avatar)
                                 .into(dialogAvatar);
 
-                        Toast.makeText(User_Profile.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(User_Profile.this, "Update successfully!", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(User_Profile.this, "Cập nhật thất bại!" + response.code() + currentUser.getId(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(User_Profile.this, "Update failed!" + response.code() + currentUser.getId(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    Toast.makeText(User_Profile.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(User_Profile.this, "Netword error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -290,7 +300,7 @@ public class User_Profile extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     String imageUrl = response.body().getUrl();
                     currentUser.setAvatar(imageUrl); // cập nhật avatar cho currentUser
-                    Toast.makeText(User_Profile.this, "Upload ảnh thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(User_Profile.this, "Upload done!", Toast.LENGTH_SHORT).show();
                     // Load ảnh mới vào avatar ngoài màn chính
 
                     if (dialogAvatar != null) {

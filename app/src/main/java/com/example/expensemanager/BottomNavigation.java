@@ -49,12 +49,12 @@ public class BottomNavigation extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 targetActivity = Overview.class;
-            } else if (itemId == R.id.nav_list) {
-                targetActivity = SavingsActivity.class;
-            } else if (itemId == R.id.nav_notifications) {
-                targetActivity = NotificationActivity.class;
+            } else if (itemId == R.id.nav_goal) {
+                targetActivity = AddGoal.class;
             } else if (itemId == R.id.nav_statistics) {
              targetActivity = StatisticsActivity.class;
+            } else if (itemId == R.id.nav_user) {
+             targetActivity = User_Profile.class;
             } else if (itemId == R.id.nav_budget) {
                 targetActivity = BudgetActivity.class;
             }

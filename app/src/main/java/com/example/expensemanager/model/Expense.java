@@ -6,11 +6,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Expense implements Serializable {
-//    private Date date;
-//    private String title;
-//    private double amount;
-//    private String category;
-
     @SerializedName("id")
     private int id;
 
@@ -30,11 +25,16 @@ public class Expense implements Serializable {
     private int userId;
 
     public Expense(Date date, String title, double amount, String category) {
+
+    private long categoryId; // Đổi thành long để gửi số
+
+    public Expense(String date, String title, double amount, long categoryId) {
         this.date = date;
         this.title = title;
         this.amount = amount;
-        this.category = category;
+        this.categoryId = categoryId;
     }
+
 
     public int getId() {
         return id;

@@ -4,23 +4,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.expensemanager.R;
-
+import com.example.expensemanager.model.Budget;
 import java.text.DateFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> {
-    private List<BudgetDisplay> budgets;
+    private List<Budget> budgets;
 
-    public BudgetAdapter(List<BudgetDisplay> budgets) {
+    public BudgetAdapter(List<Budget> budgets) {
         this.budgets = budgets;
     }
 
-    public void setBudgets(List<BudgetDisplay> budgets) {
+    public void setBudgets(List<Budget> budgets) {
         this.budgets = budgets;
         notifyDataSetChanged();
     }
@@ -34,10 +33,12 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
-        BudgetDisplay budget = budgets.get(position);
-        holder.budgetText.setText(String.format("$%.2f / $%.2f", budget.expense, budget.budget));
-        String monthName = new DateFormatSymbols().getMonths()[budget.month - 1];
-        holder.period.setText(String.format("%s %d", monthName, budget.year));
+        Budget budget = budgets.get(position);
+        // Format month and year (e.g., "May 2025")
+        String monthName = new DateFormatSymbols(Locale.getDefault()).getMonths()[budget.getMonth() - 1];
+        holder.budgetPeriod.setText(String.format("%s %d", monthName, budget.getYear()));
+        // Format amount for previous months (e.g., "$1000.00")
+        holder.budgetText.setText(String.format("$%.2f", budget.getAmount()));
     }
 
     @Override
@@ -46,27 +47,13 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
     static class BudgetViewHolder extends RecyclerView.ViewHolder {
+        TextView budgetPeriod;
         TextView budgetText;
-        TextView period;
 
         BudgetViewHolder(@NonNull View itemView) {
             super(itemView);
+            budgetPeriod = itemView.findViewById(R.id.budget_period);
             budgetText = itemView.findViewById(R.id.budget_text);
-            period = itemView.findViewById(R.id.budget_period);
-        }
-    }
-
-    public static class BudgetDisplay {
-        int month;
-        int year;
-        double expense;
-        double budget;
-
-        public BudgetDisplay(int month, int year, double expense, double budget) {
-            this.month = month;
-            this.year = year;
-            this.expense = expense;
-            this.budget = budget;
         }
     }
 }

@@ -18,6 +18,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".Register_Activity"
             android:exported="true">
             <intent-filter>
@@ -92,15 +101,15 @@
         <activity
             android:name=".ItemEntry"
             android:exported="false" />
-        <activity
-            android:name=".Entries"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--        <activity-->
+<!--            android:name=".Entries"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
             android:name=".AddExpense"
             android:exported="true"
@@ -122,9 +131,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddGoal" />
-        <activity
-            android:name=".AddReminder"
-            android:exported="false" />
+        <activity android:name=".AddBudgetActivity" />
         <activity
             android:name=".ItemGoal"
             android:exported="false" />
@@ -141,29 +148,8 @@
             android:name=".SetReminder"
             android:exported="false" />
         <activity
-            android:name=".ReminderActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ItemSaving"
             android:exported="false" />
-        <activity
-            android:name=".ItemNotification"
-            android:exported="false" />
-        <activity
-            android:name=".NotificationActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".BottomNavigation"
             android:exported="false" />
@@ -196,15 +182,6 @@
         </activity>
         <activity
             android:name=".OnBoarding1"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.AuthService;
 import com.example.expensemanager.model.LoginRequest;
 import com.example.expensemanager.model.LoginResponse;
@@ -18,21 +19,12 @@ import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthenLogin extends AppCompatActivity {
 
     private EditText usernameInput, passwordInput;
     private Button loginButton;
-
-    private final String BASE_URL = "http://10.0.2.2:3000/"; // Dùng 10.0.2.2 hoặc 10.0.3.2 tùy emulator
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +35,7 @@ public class AuthenLogin extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.btn_login);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        AuthService authService = retrofit.create(AuthService.class);
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
 
         loginButton.setOnClickListener(v -> {
             String username = usernameInput.getText().toString().trim();
@@ -76,10 +63,10 @@ public class AuthenLogin extends AppCompatActivity {
                         User user = loginResponse.getUser();
 
                         saveLoginData(accessToken, refreshToken, user);
-                        Toast.makeText(AuthenLogin.this, "Login success!", Toast.LENGTH_SHORT).show();
-
+                      
                         // Chuyển màn hình
                         startActivity(new Intent(AuthenLogin.this, Overview.class));
+                      
                         finish();
                     } else {
                         Toast.makeText(AuthenLogin.this, "Login failed!", Toast.LENGTH_SHORT).show();

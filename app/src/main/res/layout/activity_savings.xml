@@ -53,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/monthly_goal_card"
+        android:id="@+id/overview_goal_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -69,35 +69,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Month and Year -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_calendar"
-                    android:contentDescription="Calendar" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="July 2024"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-
             <!-- Goal for this Month -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Goal for this Month"
+                android:text="Total savings"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray" />
 
@@ -110,7 +87,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/monthly_goal_text"
+                    android:id="@+id/overview_goal_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_blue_background"
@@ -125,7 +102,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    app:indicatorColor="@color/Blue"
+                    app:indicatorColor="#007AFF"
                     app:trackColor="@android:color/darker_gray"
                     app:trackThickness="8dp"
                     android:progress="40" />
@@ -143,7 +120,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/monthly_goal_card"
+        app:layout_constraintTop_toBottomOf="@id/overview_goal_card"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- RecyclerView for Goals -->

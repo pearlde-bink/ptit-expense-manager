@@ -28,14 +28,6 @@ public class Budget implements Serializable {
         this.year = year;
     }
 
-    public Budget(int userId, double amount, int month, int year) {
-        this.id = -1; // -1 indicates a new budget to be inserted
-        this.userId = userId;
-        this.amount = amount;
-        this.month = month;
-        this.year = year;
-    }
-
     public int getId() {
         return id;
     }

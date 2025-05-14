@@ -4,22 +4,26 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Entry implements Serializable {
+    private int id;
     private Date date;
     private String title;
     private double amount;
-    private String category;
-    private double vatPercentage;
-    private String paymentMethod;
-    private boolean isExpense;
+    private String entry_type; // expense hoặc income
 
-    public Entry(Date date, String title, double amount, String category, double vatPercentage, String paymentMethod, boolean isExpense) {
+    private Category category;
+
+    public Entry() {}
+
+    public Entry(int id, Date date, String title, double amount, String entry_type) {
+        this.id = id;
         this.date = date;
         this.title = title;
         this.amount = amount;
-        this.category = category;
-        this.vatPercentage = vatPercentage;
-        this.paymentMethod = paymentMethod;
-        this.isExpense = isExpense;
+        this.entry_type = entry_type;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Date getDate() {
@@ -34,19 +38,36 @@ public class Entry implements Serializable {
         return amount;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public double getVatPercentage() {
-        return vatPercentage;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
+    public String getEntryType() {
+        return entry_type;
     }
 
     public boolean isExpense() {
-        return isExpense;
+        return "expense".equalsIgnoreCase(entry_type);
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setEntryType(String entry_type) {
+        this.entry_type = entry_type;
+    }
+
+    public String getCategory() {
+        if(category == null) return "DEFAULT";
+        return category.getTitle();
     }
 }

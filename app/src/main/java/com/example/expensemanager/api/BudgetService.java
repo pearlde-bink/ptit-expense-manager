@@ -17,19 +17,19 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface BudgetService {
-    @POST("/budgets")
+    @POST("budgets")
     Call<Budget> createBudget(@Header("Authorization") String authHeader, @Body BudgetRequest request);
 
-    @GET("budget")
+    @GET("budgets")
     Call<List<Budget>> getBudgets(@Header("Authorization") String authHeader);
 
-    @GET("budget/{id}")
+    @GET("budgets/{id}")
     Call<Budget> getBudget(@Header("Authorization") String authHeader, @Path("id") int id);
 
-    @PUT("budget/{id}")
+    @PUT("budgets/{id}")
     Call<Budget> updateBudget(@Header("Authorization") String authHeader, @Path("id") int id, @Body Budget budget);
 
-    @DELETE("budget/{id}")
+    @DELETE("budgets/{id}")
     Call<Void> deleteBudget(@Header("Authorization") String authHeader, @Path("id") int id);
 
     @GET("budgets/overview")

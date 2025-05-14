@@ -5,8 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:clipToPadding="false">
+    android:padding="32dp"
+    android:clipToPadding="false"
+    android:background="?attr/colorSurface">
 
     <!-- Back Arrow -->
     <ImageView
@@ -15,31 +16,34 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:text="Budget"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/colorOnBackground"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@id/back_arrow"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/back_arrow"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Current Budget (Month) -->
     <TextView
         android:id="@+id/current_budget"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/circle_blue"
         android:gravity="center"
         android:text="$0.00"
@@ -53,37 +57,89 @@
     <!-- Monthly Budget Section -->
     <androidx.cardview.widget.CardView
         android:id="@+id/monthly_budget_card"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:layout_constraintTop_toBottomOf="@id/current_budget"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Month and Year -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Calendar"
+                    android:src="@drawable/ic_calendar" />
+
+                <TextView
+                    android:id="@+id/month_year_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="July 2024"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnBackground" />
+            </LinearLayout>
+
+            <!-- Monthly Budget -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Monthly Expense / Budget"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <!-- Budget Text -->
+            <TextView
+                android:id="@+id/monthly_budget_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_blue_background"
+                android:padding="8dp"
+                android:text="$0 / $0"
+                android:textSize="14sp"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <!-- Your Budgets Title -->
-
-    <!-- RecyclerView for Budgets -->
-
     <TextView
         android:id="@+id/your_budgets_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="Previous Budgets"
-        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/monthly_budget_card" />
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintTop_toBottomOf="@id/monthly_budget_card"
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- RecyclerView for Budgets -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/budgets_list"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:scrollbars="vertical"
         android:nestedScrollingEnabled="true"
@@ -97,64 +153,10 @@
     <include
         android:id="@+id/bottom_navigation_layout"
         layout="@layout/activity_bottom_navigation"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="232dp">
-
-        <!-- Month and Year -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="Calendar"
-                android:src="@drawable/ic_calendar" />
-
-            <TextView
-                android:id="@+id/month_year_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="July 2024"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Monthly Budget -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Monthly Expense / Budget"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp" />
-
-        <!-- Budget Text -->
-        <TextView
-            android:id="@+id/monthly_budget_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/rounded_blue_background"
-            android:padding="8dp"
-            android:text="$0 / $0"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

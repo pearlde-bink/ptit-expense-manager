@@ -65,6 +65,7 @@ public class StatisticsActivity extends BaseActivity {
         setupBarChart();
         setupSpinners();
         loadStatistics();
+        setupBottomNavigation();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

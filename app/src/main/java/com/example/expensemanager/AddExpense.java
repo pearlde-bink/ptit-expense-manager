@@ -308,7 +308,7 @@ public class AddExpense extends AppCompatActivity {
 
         // Lấy danh sách tên icon
         List<String> iconNames = Arrays.asList(
-                "ic_salary", "ic_rewards", "ic_gift", "ic_shopping"
+                "ic_salary", "ic_rewards", "ic_gift", "ic_shopping", "ic_food", "ic_play"
         );
         ArrayAdapter<String> iconAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, iconNames);
         iconDropdown.setAdapter(iconAdapter);

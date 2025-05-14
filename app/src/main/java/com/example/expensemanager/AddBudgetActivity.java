@@ -11,14 +11,14 @@ import android.widget.Toast;
 import com.example.expensemanager.api.ApiClient;
 import com.example.expensemanager.api.BudgetService;
 import com.example.expensemanager.model.Budget;
-import com.example.expensemanager.model.BudgetRequest;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,7 +26,8 @@ import retrofit2.Response;
 public class AddBudgetActivity extends BaseActivity {
     private static final String TAG = "AddBudgetActivity";
     private TextInputEditText amountInput;
-    private MaterialAutoCompleteTextView monthSpinner, yearSpinner;
+    private MaterialAutoCompleteTextView monthSpinner;
+    private TextInputEditText yearInput;
     private MaterialButton btnAddBudget;
     private SharedPreferences sharedPref;
     private BudgetService budgetService;
@@ -39,25 +40,20 @@ public class AddBudgetActivity extends BaseActivity {
         // Initialize SharedPreferences
         sharedPref = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
+        // Debug SharedPreferences
+        Log.d(TAG, "accessToken: " + sharedPref.getString("accessToken", ""));
+        Log.d(TAG, "userId: " + sharedPref.getInt("userId", -1));
+
         // Initialize views
         amountInput = findViewById(R.id.amount_input);
         monthSpinner = findViewById(R.id.month_spinner);
-        yearSpinner = findViewById(R.id.year_spinner);
+        yearInput = findViewById(R.id.year_input);
         btnAddBudget = findViewById(R.id.btn_add_budget);
 
         // Setup month spinner
-        String[] months = getResources().getStringArray(R.array.months); // Từ res/values/arrays.xml
+        String[] months = getResources().getStringArray(R.array.months);
         ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, months);
         monthSpinner.setAdapter(monthAdapter);
-
-        // Setup year spinner
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        String[] years = new String[5]; // 5 năm từ hiện tại
-        for (int i = 0; i < 5; i++) {
-            years[i] = String.valueOf(currentYear + i);
-        }
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, years);
-        yearSpinner.setAdapter(yearAdapter);
 
         // Setup Retrofit
         budgetService = ApiClient.getClient().create(BudgetService.class);
@@ -112,101 +108,87 @@ public class AddBudgetActivity extends BaseActivity {
         }
 
         // Validate year
-        String yearStr = yearSpinner.getText().toString().trim();
+        String yearStr = yearInput.getText().toString().trim();
         if (yearStr.isEmpty()) {
-            yearSpinner.setError("Please select a year");
+            yearInput.setError("Please enter a year");
             return;
         }
         int year;
         try {
             year = Integer.parseInt(yearStr);
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            if (year < currentYear) {
-                yearSpinner.setError("Year must be current year or later");
-                return;
-            }
         } catch (NumberFormatException e) {
-            yearSpinner.setError("Invalid year format");
+            yearInput.setError("Invalid year format");
             return;
         }
 
-        // Get user ID
-        int userId = sharedPref.getInt("userId", -1);
-        if (userId == -1) {
-            Toast.makeText(this, "User information not found. Please login again.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, AuthenLogin.class));
-            finish();
+        // Validate year and month (not before current date)
+        Calendar currentDate = Calendar.getInstance();
+        int currentYear = currentDate.get(Calendar.YEAR); // 2025
+        int currentMonth = currentDate.get(Calendar.MONTH) + 1; // 5 (May)
+
+        if (year < currentYear) {
+            yearInput.setError("Year cannot be before " + currentYear);
+            return;
+        }
+        if (year == currentYear && month < currentMonth) {
+            monthSpinner.setError("Month cannot be before " + getResources().getStringArray(R.array.months)[currentMonth - 1]);
             return;
         }
 
-        // Check if budget already exists
-        checkBudgetExists(userId, month, year, accessToken, amount);
-    }
-
-    private void checkBudgetExists(int userId, int month, int year, String accessToken, double amount) {
-        budgetService.getBudgets("Bearer " + accessToken).enqueue(new Callback<List<Budget>>() {
-            @Override
-            public void onResponse(Call<List<Budget>> call, Response<List<Budget>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    boolean exists = response.body().stream()
-                            .anyMatch(b -> b.getUserId() == userId && b.getMonth() == month && b.getYear() == year);
-                    if (exists) {
-                        Toast.makeText(AddBudgetActivity.this, "Budget for this month already exists", Toast.LENGTH_SHORT).show();
-                    } else {
-                        addBudget(userId, amount, month, year, accessToken);
-                    }
-                } else {
-                    handleApiError(response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Budget>> call, Throwable t) {
-                Log.e(TAG, "Network error: " + t.getMessage());
-                Toast.makeText(AddBudgetActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void addBudget(int userId, double amount, int month, int year, String accessToken) {
-        BudgetRequest request = new BudgetRequest(userId, amount, month, year);
-        budgetService.createBudget("Bearer " + accessToken, request).enqueue(new Callback<Budget>() {
+        // Create Budget object and call API
+        Budget budget = new Budget(amount, month, year);
+        Call<Budget> call = budgetService.createBudget("Bearer " + accessToken, budget);
+        call.enqueue(new Callback<Budget>() {
             @Override
             public void onResponse(Call<Budget> call, Response<Budget> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(AddBudgetActivity.this, "Budget added successfully!", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
-                    finish(); // Quay về BudgetActivity
+                    finish();
                 } else {
-                    handleApiError(response.code());
+                    handleApiError(response);
                 }
             }
 
             @Override
             public void onFailure(Call<Budget> call, Throwable t) {
-                Log.e(TAG, "Network error: " + t.getMessage());
-                Toast.makeText(AddBudgetActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error: " + t.getMessage());
+                Toast.makeText(AddBudgetActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void handleApiError(int responseCode) {
-        switch (responseCode) {
-            case 400:
-                Toast.makeText(this, "Invalid request data", Toast.LENGTH_SHORT).show();
-                break;
-            case 401:
-                Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, AuthenLogin.class));
-                finish();
-                break;
-            case 409:
-                Toast.makeText(this, "Budget for this month already exists", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Toast.makeText(this, "Failed to process request: " + responseCode, Toast.LENGTH_SHORT).show();
+    private void handleApiError(Response<Budget> response) {
+        int responseCode = response.code();
+        String errorMessage = "Failed to add budget: " + responseCode;
+
+        // Try to extract error message from response body
+        if (responseCode == 400) {
+            try {
+                ResponseBody errorBody = response.errorBody();
+                if (errorBody != null) {
+                    errorMessage = errorBody.string();
+                    // Assuming the backend returns a simple message or JSON like {"error": "Budget for this month already exists!"}
+                    if (errorMessage.contains("already exists")) {
+                        errorMessage = "Budget for this month already exists!";
+                    }
+                } else {
+                    errorMessage = "Budget for this month already exists!";
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Error parsing error body: " + e.getMessage());
+                errorMessage = "Budget for this month already exists!";
+            }
+        } else if (responseCode == 401) {
+            errorMessage = "Session expired. Please login again.";
+            startActivity(new Intent(this, AuthenLogin.class));
+            finish();
+        } else if (responseCode == 409) {
+            errorMessage = "Budget for this month already exists!";
         }
-        Log.e(TAG, "Error: " + responseCode);
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+        Log.e(TAG, "Error: " + responseCode + ", Message: " + errorMessage);
     }
 
     private int getMonthIndex(String monthName) {
@@ -221,7 +203,7 @@ public class AddBudgetActivity extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_budget; // Đồng bộ với BudgetActivity
+        return R.id.nav_budget;
     }
 
     @Override

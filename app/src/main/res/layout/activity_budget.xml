@@ -88,13 +88,13 @@
 
                 <TextView
                     android:id="@+id/month_year_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="74dp"
+                    android:layout_height="24dp"
                     android:layout_marginStart="8dp"
                     android:text="July 2024"
+                    android:textColor="?attr/colorOnBackground"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnBackground" />
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <!-- Monthly Budget -->

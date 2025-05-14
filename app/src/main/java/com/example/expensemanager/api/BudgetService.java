@@ -1,7 +1,6 @@
 package com.example.expensemanager.api;
 
 import com.example.expensemanager.model.Budget;
-import com.example.expensemanager.model.BudgetRequest;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import retrofit2.http.Path;
 
 public interface BudgetService {
     @POST("budgets")
-    Call<Budget> createBudget(@Header("Authorization") String authHeader, @Body BudgetRequest request);
+    Call<Budget> createBudget(@Header("Authorization") String authHeader, @Body Budget request);
 
     @GET("budgets")
     Call<List<Budget>> getBudgets(@Header("Authorization") String authHeader);

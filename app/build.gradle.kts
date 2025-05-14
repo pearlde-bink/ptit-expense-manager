@@ -52,6 +52,7 @@ dependencies {
 
     implementation ("com.google.android.material:material:1.9.0")
 
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -2,6 +2,7 @@ package com.example.expensemanager.adapter;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,7 +20,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.expensemanager.R;
+import com.example.expensemanager.api.ApiClient;
+import com.example.expensemanager.api.GoalService;
+import com.example.expensemanager.model.AddToGoalRequest;
 import com.example.expensemanager.model.Goal;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -29,8 +34,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder> {
     private List<Goal> goals;
@@ -77,13 +87,13 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 int id = item.getItemId();
 
                 if (id == R.id.menu_add_money) {
-                    showAddMoneyDialog(goal, v.getContext());
+                    showAddMoneyDialog(goal, v.getContext(), position);
                     return true;
                 } else if (id == R.id.menu_edit_goal) {
                     showEditGoalDialog(goal, v.getContext(), holder.getAdapterPosition());
                     return true;
                 } else if (id == R.id.menu_delete_goal) {
-                    Toast.makeText(v.getContext(), "Xóa " + goal.getTitle(), Toast.LENGTH_SHORT).show();
+                    showDeleteGoalDialog(holder.itemView.getContext(), position);
                     return true;
                 }
 
@@ -121,7 +131,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         }
     }
 
-    private void showAddMoneyDialog(Goal goal, Context context) {
+    private void showAddMoneyDialog(Goal goal, Context context, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_money_goal, null);
         builder.setView(dialogView);
@@ -133,7 +143,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
 
         double currentAmount = goal.getCurrentAmount();  // ví dụ 300
         double targetAmount = goal.getTargetAmount();    // ví dụ 600
-        textPreview.setText("Tổng sau khi thêm: $" + currentAmount + " / $" + targetAmount);
+        textPreview.setText("Total money after adding: $" + currentAmount + " / $" + targetAmount);
 
         AlertDialog dialog = builder.create();
 
@@ -148,11 +158,16 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                     // ignore
                 }
                 double total = currentAmount + added;
-                textPreview.setText("Tổng sau khi thêm: $" + total + " / $" + targetAmount);
+                textPreview.setText("Total money after adding: $" + total + " / $" + targetAmount);
             }
 
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
@@ -164,9 +179,40 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 return;
             }
 
-            int addedMoney = Integer.parseInt(input);
-            // TODO: Gửi lên server API với goal.getId() + addedMoney
-            Toast.makeText(context, "Đã thêm $" + addedMoney + " vào mục tiêu " + goal.getTitle(), Toast.LENGTH_SHORT).show();
+            double addedMoney = Double.parseDouble(input);
+
+            AddToGoalRequest request = new AddToGoalRequest(goal.getId(), addedMoney);
+            String token = "Bearer " + getAccessToken(context);
+
+            GoalService goalService = ApiClient.getClient().create(GoalService.class);
+            goalService.createGoal(request, token).enqueue(new Callback<Goal>() {
+                @Override
+                public void onResponse(Call<Goal> call, Response<Goal> response) {
+                    if (response.isSuccessful()) {
+                        Goal updatedGoal = response.body();
+                        if (updatedGoal != null) {
+                            // Cập nhật item trong danh sách
+                            goals.set(position, updatedGoal);
+
+                            // Thông báo adapter cập nhật item
+                            notifyItemChanged(position);
+
+                            Toast.makeText(context, "Added $" + addedMoney + " to goal " + updatedGoal.getTitle(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Response empty", Toast.LENGTH_SHORT).show();
+                        }
+
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(context, "Failed to add money " + response.code() , Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Goal> call, Throwable t) {
+                    Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
             dialog.dismiss();
         });
 
@@ -193,7 +239,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         deadlineInput.setText(goal.getDeadline()); // Assuming it's a String like "2025-05-14"
 
         // Setup contribution type dropdown
-        String[] contributionTypes = {"Daily", "Weekly", "Monthly"};
+        String[] contributionTypes = {"Onetime", "Daily", "Weekly", "Monthly", "Yearly"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, contributionTypes);
         contributionTypeInput.setAdapter(adapter);
 
@@ -215,9 +261,10 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
             String title = titleInput.getText().toString().trim();
             String amountStr = amountInput.getText().toString().trim();
             String contributionType = contributionTypeInput.getText().toString().trim();
-            String deadline = deadlineInput.getText().toString().trim();
+            String displayedDate = deadlineInput.getText().toString(); // ex: 14/05/2025
 
-            if (title.isEmpty() || amountStr.isEmpty() || contributionType.isEmpty() || deadline.isEmpty()) {
+
+            if (title.isEmpty() || amountStr.isEmpty() || contributionType.isEmpty() || displayedDate.isEmpty()) {
                 Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -230,11 +277,38 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 return;
             }
 
-            // Update goal object
             goal.setTitle(title);
             goal.setTargetAmount(targetAmount);
             goal.setContributionType(contributionType);
-            goal.setDeadline(deadline);
+            goal.setDeadline(displayedDate); // Định dạng yyyy-MM-dd nếu backend yêu cầu
+
+            String token = "Bearer " + getAccessToken(context);
+            GoalService service = ApiClient.getClient().create(GoalService.class);
+
+            service.updateGoal(goal.getId(), goal, token).enqueue(new Callback<Goal>() {
+                @Override
+                public void onResponse(Call<Goal> call, Response<Goal> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Goal updatedGoal = response.body();
+
+                        // Cập nhật lại goal trong list
+                        goals.set(position, updatedGoal); // position là index trong adapter của item goal
+
+                        // Refresh UI
+                        notifyItemChanged(position);
+
+                        Toast.makeText(context, "Goal updated", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Goal> call, Throwable t) {
+                    Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
             // Notify adapter
             notifyItemChanged(position);
@@ -247,5 +321,42 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         });
 
         dialog.show();
+    }
+
+    private void showDeleteGoalDialog(Context context, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Delete Goal")
+                .setMessage("Are you sure you want to delete this goal?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    String token = "Bearer " + getAccessToken(context);
+                    GoalService service = ApiClient.getClient().create(GoalService.class);
+                    Goal goal = goals.get(position); // Lấy goal theo vị trí
+
+                    service.deleteGoal(goal.getId(), token).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                goals.remove(position);
+                                notifyItemRemoved(position); // Animation mượt mà khi item bị xoá
+                                notifyItemRangeChanged(position, goals.size()); // Cập nhật vị trí các item còn lại
+                                Toast.makeText(context, "Goal deleted", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Failed to delete goal", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private String getAccessToken(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        return sharedPref.getString("accessToken", null);
     }
 }

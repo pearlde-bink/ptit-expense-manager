@@ -27,11 +27,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -114,7 +112,7 @@ public class BudgetActivity extends BaseActivity {
 
     private void setupRecyclerView() {
         budgets = new ArrayList<>();
-        budgetAdapter = new BudgetAdapter(budgets);
+        budgetAdapter = new BudgetAdapter(budgets, this);
         budgetsList.setLayoutManager(new LinearLayoutManager(this));
         budgetsList.setAdapter(budgetAdapter);
     }
@@ -159,7 +157,10 @@ public class BudgetActivity extends BaseActivity {
                         currentBudgetText.setText("$0.00");
                     }
 
-                    // Fetch Expenses
+                    // Update RecyclerView with all budgets
+                    budgetAdapter.setBudgets(budgets);
+
+                    // Fetch Expenses for current month only
                     fetchExpenses(accessToken, currentMonth, currentYear, currentBudget);
                 } else {
                     handleError(response.code());
@@ -199,25 +200,6 @@ public class BudgetActivity extends BaseActivity {
                     } else {
                         monthlyBudgetText.setText(String.format("$%.2f / $0.00", currentTotalExpense));
                     }
-
-                    // Filter and sort budgets for the last 3 months (excluding current month)
-                    List<Budget> recentBudgets = budgets.stream()
-                            .filter(b -> !(b.getMonth() == currentMonth && b.getYear() == currentYear))
-                            .sorted(Comparator.comparingInt(Budget::getYear)
-                                    .thenComparingInt(Budget::getMonth)
-                                    .reversed())
-                            .limit(3)
-                            .collect(Collectors.toList());
-
-                    // Prepare data for RecyclerView
-                    List<BudgetWithExpense> displayBudgets = new ArrayList<>();
-                    for (Budget budget : recentBudgets) {
-                        double totalExpense = calculateTotalExpenseForMonth(allExpenses, budget.getMonth(), budget.getYear());
-                        displayBudgets.add(new BudgetWithExpense(budget, totalExpense));
-                    }
-
-                    // Update RecyclerView with recent budgets
-                    budgetAdapter.setBudgetsWithExpenses(displayBudgets);
                 } else {
                     handleError(response.code());
                     // Fallback if expenses fetch fails
@@ -226,13 +208,6 @@ public class BudgetActivity extends BaseActivity {
                     } else {
                         monthlyBudgetText.setText("$0.00 / $0.00");
                     }
-                    budgetAdapter.setBudgets(budgets.stream()
-                            .filter(b -> !(b.getMonth() == currentMonth && b.getYear() == currentYear))
-                            .sorted(Comparator.comparingInt(Budget::getYear)
-                                    .thenComparingInt(Budget::getMonth)
-                                    .reversed())
-                            .limit(3)
-                            .collect(Collectors.toList()));
                 }
             }
 
@@ -246,13 +221,6 @@ public class BudgetActivity extends BaseActivity {
                 } else {
                     monthlyBudgetText.setText("$0.00 / $0.00");
                 }
-                budgetAdapter.setBudgets(budgets.stream()
-                        .filter(b -> !(b.getMonth() == currentMonth && b.getYear() == currentYear))
-                        .sorted(Comparator.comparingInt(Budget::getYear)
-                                .thenComparingInt(Budget::getMonth)
-                                .reversed())
-                        .limit(3)
-                        .collect(Collectors.toList()));
             }
         });
     }
@@ -300,30 +268,10 @@ public class BudgetActivity extends BaseActivity {
             startActivity(new Intent(this, AuthenLogin.class));
             finish();
         } else if (responseCode == 400) {
-            // Giả định API trả về 400 với message khi budget tháng đã tồn tại
             Toast.makeText(this, "A budget for the selected month already exists!", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "Failed to fetch data: " + responseCode, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Error: " + responseCode);
-        }
-    }
-
-    // Class to hold Budget and its totalExpense together
-    public static class BudgetWithExpense {
-        private final Budget budget;
-        private final double totalExpense;
-
-        public BudgetWithExpense(Budget budget, double totalExpense) {
-            this.budget = budget;
-            this.totalExpense = totalExpense;
-        }
-
-        public Budget getBudget() {
-            return budget;
-        }
-
-        public double getTotalExpense() {
-            return totalExpense;
         }
     }
 }

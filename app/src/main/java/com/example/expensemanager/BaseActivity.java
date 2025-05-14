@@ -55,8 +55,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 targetActivity = SavingsActivity.class;
             } else if (itemId == R.id.nav_notifications) {
                 targetActivity = NotificationActivity.class;
-            } else if (itemId == R.id.nav_settings) {
-                targetActivity = ReminderActivity.class;
+            } else if (itemId == R.id.nav_statistics) {
+                targetActivity = StatisticsActivity.class;
             }else if (itemId == R.id.nav_budget) {
                 targetActivity = BudgetActivity.class;
             }

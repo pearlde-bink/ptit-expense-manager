@@ -48,7 +48,7 @@ public class ReminderActivity extends BaseActivity {
 
     @Override
     protected int getSelectedNavItemId() {
-        return R.id.nav_settings;
+        return R.id.nav_statistics;
     }
 
     @Override

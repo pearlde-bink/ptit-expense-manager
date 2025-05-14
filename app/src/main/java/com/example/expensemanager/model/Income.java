@@ -1,12 +1,31 @@
 package com.example.expensemanager.model;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class Income implements Serializable {
+//    private Date date;
+//    private String title;
+//    private double amount;
+//    private String category;
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("date")
     private Date date;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("amount")
     private double amount;
+
+    @SerializedName("category")
     private String category;
+
+    @SerializedName("userId")
+    private int userId;
 
     public Income(Date date, String title, double amount, String category) {
         this.date = date;
@@ -29,5 +48,21 @@ public class Income implements Serializable {
 
     public String getCategory() {
         return category;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
